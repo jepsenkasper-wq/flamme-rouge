@@ -1,4 +1,4 @@
-
+console.log("💥💥💥 HELLO FROM LOCAL CODE 💥💥💥");
 import { supabase } from "./supabase";
 import { useState, useEffect } from "react";
 
@@ -51,7 +51,9 @@ function Jersey({ type }) {
 }
 
 export default function App() {
-  
+
+  console.log("🔥 APP RENDERING");
+
   // ======================
   // LOAD INITIAL STATE
   // ======================
@@ -66,6 +68,71 @@ const [stage, setStage] = useState(1);
 const [results, setResults] = useState({});
 const [playerColor, setPlayerColor] = useState("blue");
 const [deleteModal, setDeleteModal] = useState(null);
+
+useEffect(() => {
+  console.log("🚀 REALTIME HOOK STARTER");
+}, []);
+
+useEffect(() => {
+  console.log("🚀 Realtime effect mounted");
+
+  const channel = supabase
+    .channel("test-channel")
+    .on(
+      "postgres_changes",
+      {
+        event: "*",
+        schema: "public",
+        table: "games",
+      },
+      (payload) => {
+        console.log("🔥 REALTIME EVENT:", payload);
+      }
+    )
+    .subscribe((status) => {
+      console.log("📡 Realtime status:", status);
+    });
+
+  return () => {
+    supabase.removeChannel(channel);
+  };
+}, []);
+
+useEffect(() => {
+  const channel = supabase
+    .channel("games-realtime")
+    .on(
+      "postgres_changes",
+      {
+        event: "*",
+        schema: "public",
+        table: "games",
+      },
+      (payload) => {
+        console.log("🔥 REALTIME:", payload);
+
+        const newRow = payload.new;
+        const oldRow = payload.old;
+
+        setGames((prev) => {
+          const copy = { ...prev };
+
+          if (payload.eventType === "DELETE") {
+            delete copy[oldRow.id];
+          } else {
+            copy[newRow.id] = newRow;
+          }
+
+          return copy;
+        });
+      }
+    )
+    .subscribe();
+
+  return () => {
+    supabase.removeChannel(channel);
+  };
+}, []);
 
 useEffect(() => {
   async function loadGames() {
