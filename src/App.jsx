@@ -51,8 +51,7 @@ function Jersey({ type }) {
 }
 
 export default function App() {
-
-  console.log("🔥 APP RENDERING");
+console.log("🔥 APP RENDERING");
 
   // ======================
   // LOAD INITIAL STATE
@@ -60,43 +59,53 @@ export default function App() {
 
 const [loading, setLoading] = useState(true);
 const [games, setGames] = useState({});
-const [currentGame, setCurrentGame] = useState(null);
-
-const [players, setPlayers] = useState([]);
+const [currentGame, setCurrentGame] = useState(null); 
 const [name, setName] = useState("");
-const [stage, setStage] = useState(1);
-const [results, setResults] = useState({});
 const [playerColor, setPlayerColor] = useState("blue");
 const [deleteModal, setDeleteModal] = useState(null);
+const activeGame = games[currentGame];
+const players = activeGame?.players ?? [];
+const stage = activeGame?.stage ?? 1;
+const results = activeGame?.results ?? {};
 
-useEffect(() => {
-  console.log("🚀 REALTIME HOOK STARTER");
-}, []);
+console.log("currentGame:", currentGame);
+console.log("games keys:", Object.keys(games));
 
-useEffect(() => {
-  console.log("🚀 Realtime effect mounted");
+async function saveGame(patch = {}) {
+  if (!currentGame) return;
 
-  const channel = supabase
-    .channel("test-channel")
-    .on(
-      "postgres_changes",
-      {
-        event: "*",
-        schema: "public",
-        table: "games",
-      },
-      (payload) => {
-        console.log("🔥 REALTIME EVENT:", payload);
-      }
-    )
-    .subscribe((status) => {
-      console.log("📡 Realtime status:", status);
-    });
-
-  return () => {
-    supabase.removeChannel(channel);
+  const updatedGame = {
+    id: currentGame,
+    name: games[currentGame]?.name,
+    players,
+    stage,
+    results,
+    ...patch,
   };
-}, []);
+
+const { data, error } = await supabase
+  .from("games")
+  .update(updatedGame)
+  .eq("id", currentGame);
+
+console.log("🧪 SAVE RESULT:", data);
+
+if (error) {
+  console.log("SAVE ERROR:", error);
+}
+}
+
+function updateCurrentGame(patch) {
+  if (!currentGame) return;
+
+  setGames((prev) => ({
+    ...prev,
+    [currentGame]: {
+      ...prev[currentGame],
+      ...patch,
+    },
+  }));
+}
 
 useEffect(() => {
   const channel = supabase
@@ -111,23 +120,29 @@ useEffect(() => {
       (payload) => {
         console.log("🔥 REALTIME:", payload);
 
-        const newRow = payload.new;
-        const oldRow = payload.old;
+        const row = payload.new || payload.old;
+
+        if (!row?.id) return;
 
         setGames((prev) => {
           const copy = { ...prev };
 
           if (payload.eventType === "DELETE") {
-            delete copy[oldRow.id];
+            delete copy[row.id];
           } else {
-            copy[newRow.id] = newRow;
+            copy[row.id] = {
+              ...copy[row.id],
+              ...row,
+            };
           }
 
           return copy;
         });
       }
     )
-    .subscribe();
+    .subscribe((status) => {
+      console.log("📡 Realtime status:", status);
+    });
 
   return () => {
     supabase.removeChannel(channel);
@@ -140,14 +155,23 @@ useEffect(() => {
       .from("games")
       .select("*");
 
-    console.log("LOAD SUPABASE:", data);
+    if (error) {
+      console.log(error);
+      return;
+    }
 
-    if (error) return;
+    if (!data) {
+      setGames({});
+      setCurrentGame(null);
+      setLoading(false);
+      return;
+    }
 
     const formatted = Object.fromEntries(
       data.map((game) => [
         game.id,
         {
+          id: game.id,
           name: game.name,
           players: game.players || [],
           stage: game.stage || 1,
@@ -158,61 +182,19 @@ useEffect(() => {
 
     setGames(formatted);
 
-    const firstId = data[0]?.id;
+    setCurrentGame((prev) => {
+      // behold valgt game hvis det stadig findes
+      if (prev && formatted[prev]) return prev;
 
-    if (firstId) {
-      setCurrentGame(firstId);
-      setPlayers(formatted[firstId].players);
-      setStage(formatted[firstId].stage);
-      setResults(formatted[firstId].results);
-    }
+      // ellers vælg første
+      return data?.[0]?.id || null;
+    });
 
     setLoading(false);
   }
 
   loadGames();
 }, []);
-
-useEffect(() => {
-  if (!currentGame) return;
-  if (loading) return; // 🚫 STOP ALT UNDER LOAD
-
-  const updatedGame = {
-    id: currentGame,
-    name: games[currentGame]?.name,
-    players,
-    stage,
-    results,
-  };
-
-  const updatedGames = {
-    ...games,
-    [currentGame]: updatedGame,
-  };
-
-  setGames(updatedGames);
-
-  localStorage.setItem(
-    "flamme-rouge-games",
-    JSON.stringify(updatedGames)
-  );
-
-  async function saveToSupabase() {
-    const { error } = await supabase
-      .from("games")
-      .update({
-        name: updatedGame.name,
-        players: updatedGame.players,
-        stage: updatedGame.stage,
-        results: updatedGame.results,
-      })
-      .eq("id", currentGame);
-
-    if (error) console.log(error);
-  }
-
-  saveToSupabase();
-}, [players, stage, results, loading]);
 
 
   // ======================
@@ -223,18 +205,19 @@ useEffect(() => {
   // 👥 PLAYERS
   // =========================
 
-function addPlayer() {
+async function addPlayer() {
   if (!name.trim()) return;
-  if (players.length >= 6) return;
+  if (!currentGame) return;
 
-  setPlayers([
-  ...players,
-  {
-    id: Date.now(),
-    name,
-    color: playerColor,
-  },
-]);
+  const newPlayers = [
+    ...players,
+    { id: Date.now(), name, color: playerColor },
+  ];
+
+  await supabase
+    .from("games")
+    .update({ players: newPlayers })
+    .eq("id", currentGame);
 
   setName("");
 }
@@ -259,11 +242,8 @@ async function createNewGame() {
     [id]: newGame,
   };
 
-  setGames(newGames);
-  setCurrentGame(id);
-  setPlayers([]);
-  setStage(1);
-  setResults({});
+setGames(newGames);
+setCurrentGame(id);
 
   // 2. SUPABASE (NY DEL 🚀)
   const { error } = await supabase.from("games").insert([
@@ -286,56 +266,34 @@ function switchGame(gameId) {
 
   setCurrentGame(gameId);
 
-  setPlayers(selectedGame.players || []);
-  setStage(selectedGame.stage || 1);
-  setResults(selectedGame.results || {});
 }
 
 async function deleteGame() {
   if (!currentGame) return;
 
-  const confirmDelete = window.confirm(
-    "Vil du slette dette spil?"
-  );
-
+  const confirmDelete = window.confirm("Vil du slette dette spil?");
   if (!confirmDelete) return;
 
-  const updatedGames = { ...games };
+  // 1. Supabase delete
+  const { error } = await supabase
+    .from("games")
+    .delete()
+    .eq("id", currentGame);
 
+  console.log("DELETE ERROR:", error);
+
+  // 2. beregn next state BEFORE setState
+  const updatedGames = { ...games };
   delete updatedGames[currentGame];
 
-const { error } = await supabase
-  .from("games")
-  .delete()
-  .eq("id", currentGame);
-
-console.log("DELETE ERROR:", error);
-
   const remainingIds = Object.keys(updatedGames);
+  const nextGame = remainingIds[0] || null;
 
-  let nextGame = remainingIds[0] || null;
-
+  // 3. apply state in correct order
   setGames(updatedGames);
-
-  localStorage.setItem(
-    "flamme-rouge-games",
-    JSON.stringify(updatedGames)
-  );
-
-  if (nextGame) {
-    const g = updatedGames[nextGame];
-
-    setCurrentGame(nextGame);
-    setPlayers(g.players || []);
-    setStage(g.stage || 1);
-    setResults(g.results || {});
-  } else {
-    setCurrentGame(null);
-    setPlayers([]);
-    setStage(1);
-    setResults({});
-  }
+  setCurrentGame(nextGame);
 }
+
 function deletePlayer(playerId) {
   const player = players.find(p => p.id === playerId);
 
@@ -356,8 +314,10 @@ function confirmDelete() {
     }
   });
 
-  setPlayers(updatedPlayers);
-  setResults(updatedResults);
+updateCurrentGame({
+  players: updatedPlayers,
+  results: updatedResults,
+});
 
   setDeleteModal(null);
 }
@@ -369,22 +329,25 @@ function cancelDelete() {
   // 📝 RESULTS
   // =========================
 
-function updateResult(playerId, rider, field, value) {
-  setResults((prev) => {
-    return {
-      ...prev,
-      [stage]: {
-        ...prev[stage],
-        [playerId]: {
-          ...prev[stage]?.[playerId],
-          [rider]: {
-            ...prev[stage]?.[playerId]?.[rider],
-            [field]: value,
-          },
+async function updateResult(playerId, rider, field, value) {
+  const newResults = {
+    ...results,
+    [stage]: {
+      ...results[stage],
+      [playerId]: {
+        ...results[stage]?.[playerId],
+        [rider]: {
+          ...results[stage]?.[playerId]?.[rider],
+          [field]: value,
         },
       },
-    };
-  });
+    },
+  };
+
+  await supabase
+    .from("games")
+    .update({ results: newResults })
+    .eq("id", currentGame);
 }
 
   function getValue(playerId, rider, field) {
@@ -662,8 +625,15 @@ function updateResult(playerId, rider, field, value) {
       <h2>Etape</h2>
 
       <select
-        value={stage}
-        onChange={(e) => setStage(Number(e.target.value))}
+value={stage}
+onChange={async (e) => {
+  const newStage = Number(e.target.value);
+
+  await supabase
+    .from("games")
+    .update({ stage: newStage })
+    .eq("id", currentGame);
+}}
       >
         {Array.from({ length: 21 }, (_, i) => (
           <option key={i + 1} value={i + 1}>
