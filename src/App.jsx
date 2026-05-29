@@ -422,21 +422,77 @@ async function updateResult(playerId, rider, field, value) {
     });
   });
 
+  function getLatestStageWithData() {
+  const stages = Object.keys(results)
+    .map(Number)
+    .sort((a, b) => b - a);
+
+  return stages[0] || 1;
+}
+
+const latestStage = getLatestStageWithData();
+
   // =========================
   // 🟡 CLASSIFICATIONS
   // =========================
 
-  const gcClassification = [...riderStats].sort(
-    (a, b) => a.time - b.time
-  );
+const gcClassification = [...riderStats].sort(
+  (a, b) => {
+    // først samletid
+    if (a.time !== b.time) {
+      return a.time - b.time;
+    }
 
-  const mountainClassification = [...riderStats].sort(
-    (a, b) => b.mountain - a.mountain
-  );
+    // tie-break = seneste etape
+    const aTime = timeToSeconds(
+      results?.[latestStage]?.[a.playerId]?.[a.rider]?.time
+    );
 
-  const sprintClassification = [...riderStats].sort(
-    (a, b) => b.sprint - a.sprint
-  );
+    const bTime = timeToSeconds(
+      results?.[latestStage]?.[b.playerId]?.[b.rider]?.time
+    );
+
+    return aTime - bTime;
+  }
+);
+
+const mountainClassification = [...riderStats].sort(
+  (a, b) => {
+    // først bjergpoint
+    if (b.mountain !== a.mountain) {
+      return b.mountain - a.mountain;
+    }
+
+    // tie-break = seneste etape-tid
+    const aTime = timeToSeconds(
+      results?.[latestStage]?.[a.playerId]?.[a.rider]?.time
+    );
+
+    const bTime = timeToSeconds(
+      results?.[latestStage]?.[b.playerId]?.[b.rider]?.time
+    );
+
+    return aTime - bTime;
+  }
+);
+
+const sprintClassification = [...riderStats].sort(
+  (a, b) => {
+    if (b.sprint !== a.sprint) {
+      return b.sprint - a.sprint;
+    }
+
+    const aTime = timeToSeconds(
+      results?.[latestStage]?.[a.playerId]?.[a.rider]?.time
+    );
+
+    const bTime = timeToSeconds(
+      results?.[latestStage]?.[b.playerId]?.[b.rider]?.time
+    );
+
+    return aTime - bTime;
+  }
+);
 
   // =========================
   // 👥 TEAM TIME
