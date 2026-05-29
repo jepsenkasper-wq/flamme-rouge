@@ -385,7 +385,15 @@ async function updateResult(playerId, rider, field, value) {
 
     return `${minutes}:${String(seconds).padStart(2, "0")}`;
   }
+  
+function isActive(r) {
+  const hasPoints =
+    r.mountain > 0 || r.sprint > 0 || r.tourPoints > 0;
 
+  const hasTime = r.time > 0;
+
+  return hasPoints || hasTime;
+}
   // =========================
   // 📊 RIDER STATS
   // =========================
@@ -554,29 +562,35 @@ const sprintClassification = [...riderStats].sort(
     // GC bonus
     let gcPoints = 0;
 
-    gcClassification.forEach((rider, index) => {
-      if (rider.playerId === player.id) {
-        gcPoints += gcBonus(index);
-      }
-    });
+   gcClassification.forEach((rider, index) => {
+  if (rider.playerId !== player.id) return;
+
+  if (!isActive(rider)) return;
+
+  gcPoints += gcBonus(index);
+});
 
     // Mountain bonus
     let mountainPoints = 0;
 
-    mountainClassification.forEach((rider, index) => {
-      if (rider.playerId === player.id) {
-        mountainPoints += otherBonus(index);
-      }
-    });
+   mountainClassification.forEach((rider, index) => {
+  if (rider.playerId !== player.id) return;
+
+  if (!isActive(rider)) return;
+
+  mountainPoints += otherBonus(index);
+});
 
     // Sprint bonus
     let sprintPoints = 0;
 
     sprintClassification.forEach((rider, index) => {
-      if (rider.playerId === player.id) {
-        sprintPoints += otherBonus(index);
-      }
-    });
+  if (rider.playerId !== player.id) return;
+
+  if (!isActive(rider)) return;
+
+  sprintPoints += otherBonus(index);
+});
 
     // Team bonus
     let teamPoints = 0;
@@ -585,9 +599,9 @@ const sprintClassification = [...riderStats].sort(
       (t) => t.playerId === player.id
     );
 
-    if (teamIndex !== -1) {
-      teamPoints = otherBonus(teamIndex);
-    }
+   if (teamIndex !== -1 && teamClassification[teamIndex]?.time > 0) {
+  teamPoints = otherBonus(teamIndex);
+}
 
     return {
       player: player.name,
