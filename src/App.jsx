@@ -124,20 +124,26 @@ useEffect(() => {
 
         if (!row?.id) return;
 
-        setGames((prev) => {
-          const copy = { ...prev };
+setGames((prev) => {
+  const copy = { ...prev };
 
-          if (payload.eventType === "DELETE") {
-            delete copy[row.id];
-          } else {
-            copy[row.id] = {
-              ...copy[row.id],
-              ...row,
-            };
-          }
+  if (payload.eventType === "DELETE") {
+    delete copy[row.id];
 
-          return copy;
-        });
+    if (row.id === currentGame) {
+      setCurrentGame(null);
+    }
+
+    return copy;
+  }
+
+  copy[row.id] = {
+    ...(copy[row.id] || {}),
+    ...row,
+  };
+
+  return copy;
+});
       }
     )
     .subscribe((status) => {
@@ -319,7 +325,12 @@ updateCurrentGame({
   results: updatedResults,
 });
 
-  setDeleteModal(null);
+saveGame({
+  players: updatedPlayers,
+  results: updatedResults,
+});
+
+setDeleteModal(null);
 }
 
 function cancelDelete() {
