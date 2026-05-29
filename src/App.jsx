@@ -1,4 +1,5 @@
 console.log("💥💥💥 HELLO FROM LOCAL CODE 💥💥💥");
+import "./App.css";
 import { supabase } from "./supabase";
 import { useState, useEffect } from "react";
 
@@ -332,6 +333,69 @@ setDeleteModal(null);
 function cancelDelete() {
   setDeleteModal(null);
 }
+
+console.log("FIRST PLAYER:", players[0]);
+function updateTieBreak(playerId, rider, direction) {
+  setGames((prev) => {
+    const copy = { ...prev };
+
+    const entry =
+      copy[currentGame]
+        ?.results?.[stage]?.[playerId]?.[rider];
+
+    if (!entry) return prev;
+
+    const current = entry.tieBreakOrder ?? 0;
+    const newValue = current + direction;
+
+    copy[currentGame].results[stage][playerId][rider] = {
+      ...entry,
+      tieBreakOrder: newValue,
+    };
+
+    return copy;
+  });
+}
+
+function updateTieBreakOrder(list) {
+  return list.map((r, index) => ({
+    ...r,
+    tieBreakOrder: index,
+  }));
+}
+
+function moveUp(index) {
+  setGames((prev) => {
+    const updated = [...stageLeaderboard];
+
+    if (index === 0) return prev;
+
+    [updated[index - 1], updated[index]] =
+      [updated[index], updated[index - 1]];
+
+    const fixed = updateTieBreakOrder(updated);
+
+    // TODO: gem i results (næste step)
+    return prev;
+  });
+}
+
+function moveDown(index) {
+  setGames((prev) => {
+    const updated = [...stageLeaderboard];
+
+    if (index === updated.length - 1) return prev;
+
+    [updated[index + 1], updated[index]] =
+      [updated[index], updated[index + 1]];
+
+    const fixed = updateTieBreakOrder(updated);
+
+    return prev;
+  });
+}
+
+
   // =========================
   // 📝 RESULTS
   // =========================
@@ -443,6 +507,47 @@ const latestStage = getLatestStageWithData();
   // =========================
   // 🟡 CLASSIFICATIONS
   // =========================
+console.log("🔥 FULL RESULTS:", results);
+console.log("🏁 CURRENT STAGE:", stage);
+console.log("📦 STAGE DATA:", results?.[stage]);
+
+function toSeconds(time) {
+  if (typeof time === "number") return time;
+
+  if (typeof time === "string" && time.includes(":")) {
+    const [m, s] = time.split(":").map(Number);
+    return m * 60 + s;
+  }
+
+  return 0;
+}
+
+const stageLeaderboard = Object.entries(results?.[stage] || {})
+  .flatMap(([playerId, riders]) =>
+    Object.entries(riders || {}).map(([rider, data]) => {
+
+      const player = players.find(
+        (p) => String(p.id) === String(playerId)
+      );
+
+      const rawTime = data?.time;
+
+      const time = toSeconds(rawTime);
+
+      return {
+        playerId,
+        playerName: player?.name || "Ukendt",
+        riderType: rider,
+        rawTime,
+        time,
+        tieBreakOrder: data?.tieBreakOrder ?? 0,
+      };
+    })
+  )
+  .sort((a, b) => {
+    if (a.time !== b.time) return a.time - b.time;
+    return a.tieBreakOrder - b.tieBreakOrder;
+  });
 
 const gcClassification = [...riderStats].sort(
   (a, b) => {
@@ -720,6 +825,44 @@ onChange={async (e) => {
       </select>
 
       {/* INPUTS */}
+
+
+<div className="stage-box">
+  <h3>🏁 Etape {stage}</h3>
+
+<div className="stage-card-wrapper">
+
+  {stageLeaderboard.map((r, i) => (
+    <div key={`${r.playerId}-${r.riderType}`} className="stage-row">
+
+      <div className="stage-info">
+      {i === 0 && "🥇 "}
+      {i === 1 && "🥈 "}
+      {i === 2 && "🥉 "}
+        {i + 1}. {r.playerName} ({r.riderType}) – {r.rawTime}
+      </div>
+
+      <div className="tie-controls">
+        <button
+          className="tie-btn"
+          onClick={() => updateTieBreak(r.playerId, r.riderType, -1)}
+        >
+          ↑
+        </button>
+
+        <button
+          className="tie-btn"
+          onClick={() => updateTieBreak(r.playerId, r.riderType, 1)}
+        >
+          ↓
+        </button>
+      </div>
+
+    </div>
+  ))}
+</div>
+</div>
+
       {players.map((p) => (
       <div
   key={p.id}

@@ -187,3 +187,64 @@
     grid-template-columns: 1fr;
   }
 }
+.tie-btn {
+  font-size: 10px;
+  padding: 0 4px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+.stage-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+}
+
+.stage-card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+
+  padding: 8px 12px;
+  margin-bottom: 2px;
+
+  background: #fff;
+  border-radius: 10px;
+  border: 1px solid #e5e5e5;
+}
+
+.stage-info {
+  text-align: center;
+  flex: 1;
+
+  font-size: 13px; /* ekstra kontrol */
+}
+
+.tie-controls {
+  display: flex;
+  gap: 4px;
+}
+
+.stage-card-wrapper {
+  background: #f2f2f2;
+  padding: 8px;
+  border-radius: 12px;
+  margin-top: 10px;
+
+  font-size: 13px; /* 👈 gør alt mindre */
+}
+
+.stage-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+
+  padding: 2px 4px;
+  margin-bottom: 4px;
+
+  background: white;
+  border-radius: 8px;
+}
