@@ -280,7 +280,14 @@ async function deleteGame() {
   const confirmDelete = window.confirm("Vil du slette dette spil?");
   if (!confirmDelete) return;
 
-  // 1. Supabase delete
+  // find næste game FØR delete
+  const remainingIds = Object.keys(games).filter(
+    (id) => id !== currentGame
+  );
+
+  const nextGame = remainingIds[0] || null;
+
+  // delete i Supabase
   const { error } = await supabase
     .from("games")
     .delete()
@@ -288,15 +295,7 @@ async function deleteGame() {
 
   console.log("DELETE ERROR:", error);
 
-  // 2. beregn next state BEFORE setState
-  const updatedGames = { ...games };
-  delete updatedGames[currentGame];
-
-  const remainingIds = Object.keys(updatedGames);
-  const nextGame = remainingIds[0] || null;
-
-  // 3. apply state in correct order
-  setGames(updatedGames);
+  // kun skift current game lokalt
   setCurrentGame(nextGame);
 }
 
