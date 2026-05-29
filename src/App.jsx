@@ -63,7 +63,7 @@ const [currentGame, setCurrentGame] = useState(null);
 const [name, setName] = useState("");
 const [playerColor, setPlayerColor] = useState("blue");
 const [deleteModal, setDeleteModal] = useState(null);
-const activeGame = games[currentGame];
+const activeGame = games[currentGame] ?? null;
 const players = activeGame?.players ?? [];
 const stage = activeGame?.stage ?? 1;
 const results = activeGame?.results ?? {};
@@ -117,34 +117,42 @@ useEffect(() => {
         schema: "public",
         table: "games",
       },
-      (payload) => {
-        console.log("🔥 REALTIME:", payload);
+(payload) => {
+  console.log("🔥 REALTIME:", payload);
 
-        const row = payload.new || payload.old;
+  const eventType = payload.eventType;
+  const oldRow = payload.old;
+  const newRow = payload.new;
 
-        if (!row?.id) return;
+  const id = oldRow?.id ?? newRow?.id;
+  if (!id) return;
 
-setGames((prev) => {
-  const copy = { ...prev };
+  setGames((prev) => {
+    const copy = { ...prev };
 
-  if (payload.eventType === "DELETE") {
-    delete copy[row.id];
+    if (eventType === "DELETE") {
+      delete copy[id];
 
-    if (row.id === currentGame) {
-      setCurrentGame(null);
+      // ⚠️ vigtig: brug COPY, ikke games
+      const remainingIds = Object.keys(copy);
+
+      // opdater currentGame HER (ikke udenfor)
+      setCurrentGame((current) => {
+        if (current !== id) return current;
+        return remainingIds[0] || null;
+      });
+
+      return copy;
     }
 
+    copy[id] = {
+      ...(prev[id] || {}),
+      ...(newRow || oldRow),
+    };
+
     return copy;
-  }
-
-  copy[row.id] = {
-    ...(copy[row.id] || {}),
-    ...row,
-  };
-
-  return copy;
-});
-      }
+  });
+}
     )
     .subscribe((status) => {
       console.log("📡 Realtime status:", status);
@@ -277,26 +285,15 @@ function switchGame(gameId) {
 async function deleteGame() {
   if (!currentGame) return;
 
-  const confirmDelete = window.confirm("Vil du slette dette spil?");
-  if (!confirmDelete) return;
+  const ok = window.confirm("Vil du slette dette spil?");
+  if (!ok) return;
 
-  // find næste game FØR delete
-  const remainingIds = Object.keys(games).filter(
-    (id) => id !== currentGame
-  );
-
-  const nextGame = remainingIds[0] || null;
-
-  // delete i Supabase
   const { error } = await supabase
     .from("games")
     .delete()
     .eq("id", currentGame);
 
   console.log("DELETE ERROR:", error);
-
-  // kun skift current game lokalt
-  setCurrentGame(nextGame);
 }
 
 function deletePlayer(playerId) {
