@@ -856,7 +856,11 @@ onChange={async (e) => {
 >
 
   {i === 0 && <Jersey type="gc" />}
-  {r.player} - {r.rider} - {secondsToTime(r.time)}
+  {r.player} - {r.rider} - {
+  i === 0
+    ? secondsToTime(r.time)
+    : "+" + secondsToTime(r.time - gcClassification[0].time)
+}
 </li>
         ))}
       </ul>
@@ -1050,7 +1054,11 @@ border: i === 0 ? "2px solid #555" : "none",
   }}
 >
   {i === 0 && "👥 "}
-  {t.player} - {secondsToTime(t.time)}
+  {t.player} - {
+  i === 0
+    ? secondsToTime(t.time)
+    : "+" + secondsToTime(t.time - teamClassification[0].time)
+}
 </li>
         ))}
       </ul>
