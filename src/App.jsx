@@ -890,16 +890,28 @@ const sprintClassification = [...riderStats].sort(
   Tilføj spiller
 </button>
 
-<ul>
+<ul
+  style={{
+    display: "flex",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    gap: "10px",
+    listStyle: "none",
+    padding: 0,
+    margin: 0,
+  }}
+>
   {players.map((p) => (
     <li
       key={p.id}
       style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: "4px 0",
-      }}
+  display: "flex",
+  alignItems: "center",
+  gap: "4px",
+  padding: "4px 8px",
+  background: "#f2f2f2",
+  borderRadius: "8px",
+}}
     >
       <span>{p.name}</span>
 
