@@ -1,5 +1,8 @@
 console.log("💥💥💥 HELLO FROM LOCAL CODE 💥💥💥");
 import "./App.css";
+import ridersImg from "./assets/rouleur-new.png";
+import rouleurNew from "./assets/rouleur-new.png";
+import sprinterNew from "./assets/sprinter-new.png";
 import { supabase } from "./supabase";
 import { useState, useEffect } from "react";
 
@@ -50,7 +53,44 @@ function Jersey({ type }) {
 
   return null;
 }
+function TimeIcon() {
+  return (
+    <svg className="svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="12" cy="13" r="7" fill="none" stroke="currentColor" strokeWidth="2" />
+      <path d="M12 13V9M12 13l3 2" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <path d="M9 2h6M12 2v3" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
 
+function TourIcon() {
+  return (
+    <svg className="svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M7 20h10M9 17h6M10 14h4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <path d="M8 5h8v3a4 4 0 0 1-8 0V5Z" fill="none" stroke="currentColor" strokeWidth="2" />
+      <path d="M8 7H5c0 3 1.5 5 4 5M16 7h3c0 3-1.5 5-4 5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function MountainIcon() {
+  return (
+    <svg className="svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M3 19L10 7l4 7 3-5 4 10H3Z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+      <path d="M10 7l2 5 2-2" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function SprintIcon() {
+  return (
+    <svg className="svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M6 21V4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <path d="M7 5h10l-2 4 2 4H7V5Z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+      <path d="M9 5v8M12 5v8M15 5v8" fill="none" stroke="currentColor" strokeWidth="1.5" />
+    </svg>
+  );
+}
 export default function App() {
 console.log("🔥 APP RENDERING");
 
@@ -995,142 +1035,202 @@ onChange={async (e) => {
 </div>
 
       {players.map((p) => (
-      <div
+  <div
   key={p.id}
+  className="player-card"
   style={{
-    border: "1px solid #e5e5e5",
-    margin: 10,
-    borderRadius: "12px",
-    backgroundColor: "#f0f0f0",
-    border: `10px solid ${p.color}`,
-    boxShadow: "0 10px 10px rgba(0,0,0,0.05)",
+    "--player-color": p.color,
   }}
 >
-          <h3>{p.name}</h3>
+  <div className="player-card-header">
+    <h3>{p.name}</h3>
+  </div>
 
           {/* SPRINTER */}
-          <h4>Sprinter</h4>
+<div
+  className="rider-section sprinter-section"
+  style={{
+    "--riders-img": `url(${sprinterNew})`,
+  }}
+>
+  <div className="rider-content">
+    <h4 className="rider-title sprinter-title">Sprinter</h4>
 
-          <input
-          disabled={!isAdmin}
-            placeholder="Tid mm:ss"
-            value={getValue(p.id, "sprinter", "time")}
-            onChange={(e) =>
-              updateResult(
-                p.id,
-                "sprinter",
-                "time",
-                e.target.value
-              )
-            }
-          />
+    <div className="rider-input-grid">
+      <div className="stat-field">
+  <div className="stat-label">
+    Tid
+  </div>
 
-          <input
-          disabled={!isAdmin}
-            type="number"
-            placeholder="Tourpoint"
-            value={getValue(p.id, "sprinter", "tourPoints")}
-            onChange={(e) =>
-              updateResult(
-                p.id,
-                "sprinter",
-                "tourPoints",
-                num(e)
-              )
-            }
-          />
+  <div className="stat-input-row">
+    <span className="stat-icon"><TimeIcon /></span>
 
-          <input
-          disabled={!isAdmin}
-            type="number"
-            placeholder="Bjerg"
-            value={getValue(p.id, "sprinter", "mountain")}
-            onChange={(e) =>
-              updateResult(
-                p.id,
-                "sprinter",
-                "mountain",
-                num(e)
-              )
-            }
-          />
+    <input
+      disabled={!isAdmin}
+      value={getValue(p.id, "sprinter", "time")}
+      onChange={(e) =>
+        updateResult(
+          p.id,
+          "sprinter",
+          "time",
+          e.target.value
+        )
+      }
+    />
+  </div>
+</div>
 
-          <input
-          disabled={!isAdmin}
-            type="number"
-            placeholder="Sprint"
-            value={getValue(p.id, "sprinter", "sprint")}
-            onChange={(e) =>
-              updateResult(
-                p.id,
-                "sprinter",
-                "sprint",
-                num(e)
-              )
-            }
-          />
+      <div className="stat-field">
+  <div className="stat-label">
+    Tourpoint
+  </div>
+
+  <div className="stat-input-row">
+    <span className="stat-icon"><TourIcon /></span>
+
+    <input
+      disabled={!isAdmin}
+      type="number"
+      value={getValue(p.id, "sprinter", "tourPoints")}
+      onChange={(e) =>
+        updateResult(
+          p.id,
+          "sprinter",
+          "tourPoints",
+          num(e)
+        )
+      }
+    />
+  </div>
+</div>
+
+      <div className="stat-field">
+  <div className="stat-label">
+    Bjergpoint
+  </div>
+
+  <div className="stat-input-row">
+    <span className="stat-icon"><MountainIcon /></span>
+
+    <input
+      disabled={!isAdmin}
+      type="number"
+      value={getValue(p.id, "sprinter", "mountain")}
+      onChange={(e) =>
+        updateResult(
+          p.id,
+          "sprinter",
+          "mountain",
+          num(e)
+        )
+      }
+    />
+  </div>
+</div>
+
+      <div className="stat-field">
+  <div className="stat-label">
+    Sprintpoint
+  </div>
+
+  <div className="stat-input-row">
+    <span className="stat-icon"><SprintIcon /></span>
+
+    <input
+      disabled={!isAdmin}
+      type="number"
+      value={getValue(p.id, "sprinter", "sprint")}
+      onChange={(e) =>
+        updateResult(
+          p.id,
+          "sprinter",
+          "sprint",
+          num(e)
+        )
+      }
+    />
+  </div>
+</div>
+
+    </div>
+  </div>
+</div>
 
           {/* ROULEUR */}
-          <h4>Rouleur</h4>
+        
+        <div
+  className="rider-section rouleur-section"
+  style={{ "--riders-img": `url(${rouleurNew})` }}
+>
+  <div className="rider-content">
+    <h4 className="rider-title rouleur-title">
+      Rouleur
+    </h4>
 
-          <input
-          disabled={!isAdmin}
-            placeholder="Tid mm:ss"
-            value={getValue(p.id, "rouleur", "time")}
-            onChange={(e) =>
-              updateResult(
-                p.id,
-                "rouleur",
-                "time",
-                e.target.value
-              )
-            }
-          />
+    <div className="rider-input-grid">
 
-          <input
-          disabled={!isAdmin}
-            type="number"
-            placeholder="Tourpoint"
-            value={getValue(p.id, "rouleur", "tourPoints")}
-            onChange={(e) =>
-              updateResult(
-                p.id,
-                "rouleur",
-                "tourPoints",
-                num(e)
-              )
-            }
-          />
+  <div className="stat-field">
+    <div className="stat-label">Tid</div>
+    <div className="stat-input-row">
+      <span className="stat-icon"><TimeIcon /></span>
+      <input
+        disabled={!isAdmin}
+        value={getValue(p.id, "rouleur", "time")}
+        onChange={(e) =>
+          updateResult(p.id, "rouleur", "time", e.target.value)
+        }
+      />
+    </div>
+  </div>
 
-          <input
-          disabled={!isAdmin}
-            type="number"
-            placeholder="Bjerg"
-            value={getValue(p.id, "rouleur", "mountain")}
-            onChange={(e) =>
-              updateResult(
-                p.id,
-                "rouleur",
-                "mountain",
-                num(e)
-              )
-            }
-          />
+  <div className="stat-field">
+    <div className="stat-label">Tourpoint</div>
+    <div className="stat-input-row">
+      <span className="stat-icon"><TourIcon /></span>
+      <input
+        disabled={!isAdmin}
+        type="number"
+        value={getValue(p.id, "rouleur", "tourPoints")}
+        onChange={(e) =>
+          updateResult(p.id, "rouleur", "tourPoints", num(e))
+        }
+      />
+    </div>
+  </div>
 
-          <input
-          disabled={!isAdmin}
-            type="number"
-            placeholder="Sprint"
-            value={getValue(p.id, "rouleur", "sprint")}
-            onChange={(e) =>
-              updateResult(
-                p.id,
-                "rouleur",
-                "sprint",
-                num(e)
-              )
-            }
-          />
+  <div className="stat-field">
+    <div className="stat-label">Bjergpoint</div>
+    <div className="stat-input-row">
+      <span className="stat-icon"><MountainIcon /></span>
+      <input
+        disabled={!isAdmin}
+        type="number"
+        value={getValue(p.id, "rouleur", "mountain")}
+        onChange={(e) =>
+          updateResult(p.id, "rouleur", "mountain", num(e))
+        }
+      />
+    </div>
+  </div>
+
+  <div className="stat-field">
+    <div className="stat-label">Sprintpoint</div>
+    <div className="stat-input-row">
+      <span className="stat-icon"><SprintIcon /></span>
+      <input
+        disabled={!isAdmin}
+        type="number"
+        value={getValue(p.id, "rouleur", "sprint")}
+        onChange={(e) =>
+          updateResult(p.id, "rouleur", "sprint", num(e))
+        }
+      />
+    </div>
+  </div>
+
+</div>
+  </div>
+</div>
         </div>
       ))}
 <div
