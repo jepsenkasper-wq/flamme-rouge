@@ -64,10 +64,21 @@ const [currentGame, setCurrentGame] = useState(null);
 const [name, setName] = useState("");
 const [playerColor, setPlayerColor] = useState("blue");
 const [deleteModal, setDeleteModal] = useState(null);
+const [newGameName, setNewGameName] = useState("");
+const [newGameAdminCode, setNewGameAdminCode] = useState("");
+const [adminInput, setAdminInput] = useState("");
+const [unlockedGames, setUnlockedGames] = useState({});
+const [lockCodeInput, setLockCodeInput] = useState("");
 const activeGame = games[currentGame] ?? null;
 const players = activeGame?.players ?? [];
 const stage = activeGame?.stage ?? 1;
 const results = activeGame?.results ?? {};
+
+const isLocked =
+  !!activeGame?.admin_code && activeGame.admin_code.length > 0;
+
+const isAdmin =
+  !isLocked || unlockedGames[currentGame];
 
 console.log("currentGame:", currentGame);
 console.log("games keys:", Object.keys(games));
@@ -185,13 +196,14 @@ useEffect(() => {
     const formatted = Object.fromEntries(
       data.map((game) => [
         game.id,
-        {
-          id: game.id,
-          name: game.name,
-          players: game.players || [],
-          stage: game.stage || 1,
-          results: game.results || {},
-        },
+       {
+  id: game.id,
+  name: game.name,
+  admin_code: game.admin_code || "",
+  players: game.players || [],
+  stage: game.stage || 1,
+  results: game.results || {},
+},
       ])
     );
 
@@ -211,7 +223,45 @@ useEffect(() => {
   loadGames();
 }, []);
 
+function unlockGame() {
+  if (!currentGame) return;
 
+  if (adminInput === activeGame?.admin_code) {
+    setUnlockedGames({
+      ...unlockedGames,
+      [currentGame]: true,
+    });
+
+    setAdminInput("");
+  } else {
+    alert("Forkert admin-kode");
+  }
+}
+
+function switchGame(gameId) {
+  const selectedGame = games[gameId];
+
+  if (!selectedGame) return;
+
+  setCurrentGame(gameId);
+}
+
+async function lockCurrentGame() {
+  if (!currentGame) return;
+  if (activeGame?.admin_code) return;
+  if (!lockCodeInput.trim()) return;
+
+  const newCode = lockCodeInput.trim();
+
+  const { error } = await supabase
+    .from("games")
+    .update({ admin_code: newCode })
+    .eq("id", currentGame);
+
+  console.log("LOCK GAME ERROR:", error);
+
+  setLockCodeInput("");
+}
   // ======================
   // SAVE EVERYTHING
   // ======================
@@ -221,6 +271,7 @@ useEffect(() => {
   // =========================
 
 async function addPlayer() {
+  if (!isAdmin) return;
   if (!name.trim()) return;
   if (!currentGame) return;
 
@@ -238,33 +289,35 @@ async function addPlayer() {
 }
 
 async function createNewGame() {
-  const gameName = prompt("Navn på nyt spil?");
-  if (!gameName) return;
+  if (!newGameName.trim()) return;
 
   const id = Date.now().toString();
 
   const newGame = {
     id,
-    name: gameName.trim(),
+    name: newGameName.trim(),
+    admin_code: newGameAdminCode.trim(),
     players: [],
     stage: 1,
     results: {},
   };
 
-  // 1. LOCAL STATE (din nuværende app)
-  const newGames = {
+  setGames({
     ...games,
     [id]: newGame,
-  };
+  });
 
-setGames(newGames);
-setCurrentGame(id);
+  setCurrentGame(id);
 
-  // 2. SUPABASE (NY DEL 🚀)
+  setNewGameName("");
+setNewGameAdminCode("");
+
+
   const { error } = await supabase.from("games").insert([
     {
       id: newGame.id,
       name: newGame.name,
+      admin_code: newGame.admin_code,
       players: newGame.players,
       stage: newGame.stage,
       results: newGame.results,
@@ -274,16 +327,9 @@ setCurrentGame(id);
   console.log("SUPABASE INSERT ERROR:", error);
 }
 
-function switchGame(gameId) {
-  const selectedGame = games[gameId];
-
-  if (!selectedGame) return;
-
-  setCurrentGame(gameId);
-
-}
 
 async function deleteGame() {
+  if (!isAdmin) return;
   if (!currentGame) return;
 
   const ok = window.confirm("Vil du slette dette spil?");
@@ -298,10 +344,13 @@ async function deleteGame() {
 }
 
 function deletePlayer(playerId) {
+  if (!isAdmin) return;
+
   const player = players.find(p => p.id === playerId);
 
   setDeleteModal(player);
 }
+
 function confirmDelete() {
   if (!deleteModal) return;
 
@@ -336,6 +385,8 @@ function cancelDelete() {
 
 console.log("FIRST PLAYER:", players[0]);
 function updateTieBreak(playerId, rider, direction) {
+  if (!isAdmin) return;
+
   setGames((prev) => {
     const copy = { ...prev };
 
@@ -401,6 +452,7 @@ function moveDown(index) {
   // =========================
 
 async function updateResult(playerId, rider, field, value) {
+  if (!isAdmin) return;
   const newResults = {
     ...results,
     [stage]: {
@@ -419,7 +471,8 @@ async function updateResult(playerId, rider, field, value) {
     .from("games")
     .update({ results: newResults })
     .eq("id", currentGame);
-}
+
+  }
 
   function getValue(playerId, rider, field) {
     return results?.[stage]?.[playerId]?.[rider]?.[field] ?? "";
@@ -731,24 +784,86 @@ const sprintClassification = [...riderStats].sort(
     <div style={{ padding: 20, fontFamily: "Arial" }}>
       <h1>Flamme Rouge Manager</h1>
 
+<input
+  type="text"
+  placeholder="Spilnavn"
+  value={newGameName}
+  onChange={(e) => setNewGameName(e.target.value)}
+/>
+
+<input
+  type="text"
+  placeholder="Admin-kode (valgfri)"
+  value={newGameAdminCode}
+  onChange={(e) => setNewGameAdminCode(e.target.value)}
+/>
+
 <button onClick={createNewGame}>
   Nyt spil
 </button>
 
 <select
-  value={currentGame}
+  value={currentGame ?? ""}
   onChange={(e) => switchGame(e.target.value)}
 >
   {Object.entries(games).map(([id, game]) => (
-    <option key={id} value={id}>
-      {game.name || "Unavngivet spil"}
-    </option>
-  ))}
+  <option key={id} value={id}>
+    {game.name || "Unavngivet spil"} {game.admin_code ? "🔒" : ""}
+  </option>
+))}
 </select>
 
-<button onClick={deleteGame}>
+{isLocked && !isAdmin && (
+  <div style={{ marginTop: "10px", marginBottom: "10px" }}>
+    <strong>🔒 Dette spil er låst</strong>
+
+    <br />
+
+    <input
+      type="password"
+      placeholder="Admin-kode"
+      value={adminInput}
+      onChange={(e) => setAdminInput(e.target.value)}
+    />
+
+    <button onClick={unlockGame}>
+      Lås op
+    </button>
+  </div>
+)}
+
+{isAdmin && isLocked && (
+  <p>🔓 Admin-tilstand aktiv</p>
+)}
+
+<button
+  onClick={deleteGame}
+  disabled={!isAdmin}
+  style={{
+    opacity: isAdmin ? 1 : 0.4,
+    cursor: isAdmin ? "pointer" : "not-allowed",
+  }}
+>
   Slet spil
-</button>     
+</button>
+
+{!activeGame?.admin_code && (
+  <>
+    <input
+      type="text"
+      placeholder="Admin-kode"
+      value={lockCodeInput}
+      onChange={(e) => setLockCodeInput(e.target.value)}
+    />
+
+    <button
+      onClick={lockCurrentGame}
+      disabled={!lockCodeInput.trim()}
+    >
+      Lås spil
+    </button>
+  </>
+)}
 
       {/* PLAYERS */}
 <h2>Spillere</h2>
@@ -771,7 +886,9 @@ const sprintClassification = [...riderStats].sort(
   <option value="green">Grøn</option>
 </select>
 
-<button onClick={addPlayer}>Tilføj spiller</button>
+<button onClick={addPlayer} disabled={!isAdmin}>
+  Tilføj spiller
+</button>
 
 <ul>
   {players.map((p) => (
@@ -788,6 +905,7 @@ const sprintClassification = [...riderStats].sort(
 
       <button
         onClick={() => deletePlayer(p.id)}
+        disabled={!isAdmin}
         style={{
           background: "transparent",
           border: "none",
@@ -845,6 +963,7 @@ onChange={async (e) => {
       <div className="tie-controls">
         <button
           className="tie-btn"
+          disabled={!isAdmin}
           onClick={() => updateTieBreak(r.playerId, r.riderType, -1)}
         >
           ↑
@@ -881,6 +1000,7 @@ onChange={async (e) => {
           <h4>Sprinter</h4>
 
           <input
+          disabled={!isAdmin}
             placeholder="Tid mm:ss"
             value={getValue(p.id, "sprinter", "time")}
             onChange={(e) =>
@@ -894,6 +1014,7 @@ onChange={async (e) => {
           />
 
           <input
+          disabled={!isAdmin}
             type="number"
             placeholder="Tourpoint"
             value={getValue(p.id, "sprinter", "tourPoints")}
@@ -908,6 +1029,7 @@ onChange={async (e) => {
           />
 
           <input
+          disabled={!isAdmin}
             type="number"
             placeholder="Bjerg"
             value={getValue(p.id, "sprinter", "mountain")}
@@ -922,6 +1044,7 @@ onChange={async (e) => {
           />
 
           <input
+          disabled={!isAdmin}
             type="number"
             placeholder="Sprint"
             value={getValue(p.id, "sprinter", "sprint")}
@@ -939,6 +1062,7 @@ onChange={async (e) => {
           <h4>Rouleur</h4>
 
           <input
+          disabled={!isAdmin}
             placeholder="Tid mm:ss"
             value={getValue(p.id, "rouleur", "time")}
             onChange={(e) =>
@@ -952,6 +1076,7 @@ onChange={async (e) => {
           />
 
           <input
+          disabled={!isAdmin}
             type="number"
             placeholder="Tourpoint"
             value={getValue(p.id, "rouleur", "tourPoints")}
@@ -966,6 +1091,7 @@ onChange={async (e) => {
           />
 
           <input
+          disabled={!isAdmin}
             type="number"
             placeholder="Bjerg"
             value={getValue(p.id, "rouleur", "mountain")}
@@ -980,6 +1106,7 @@ onChange={async (e) => {
           />
 
           <input
+          disabled={!isAdmin}
             type="number"
             placeholder="Sprint"
             value={getValue(p.id, "rouleur", "sprint")}
