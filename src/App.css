@@ -699,3 +699,140 @@ input, select {
 }.classification-card--team .classification-title-block {
   transform: translateX(-10px);
 }
+
+.stage-newspaper {
+  position: relative;
+  overflow: hidden;
+}
+
+.stage-newspaper > * {
+  position: relative;
+  z-index: 2;
+}
+
+.stage-newspaper::before {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  background-image: url("/etape-header-watermark.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+
+  opacity: 0.2;
+
+  z-index: 1;
+  pointer-events: none;
+}
+
+.stage-newspaper-top {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: start;
+
+  border-bottom: 2px solid #2f241b;
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+
+  text-transform: uppercase;
+}
+
+.stage-top-left,
+.stage-top-right {
+  padding-top: 8px;
+  font-family: "Playfair Display", serif;
+  font-size: 0.9rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.stage-top-left {
+  text-align: left;
+}
+
+.stage-top-right {
+  text-align: right;
+}
+
+.stage-top-center {
+  text-align: center;
+}
+
+.stage-main-title {
+  font-family: "Playfair Display", serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 0.85;
+  letter-spacing: 0.06em;
+}
+
+.stage-sub-title {
+  margin-top: 6px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+}
+
+.stage-results-columns {
+  column-count: 2;
+  column-gap: 28px;
+}
+
+.stage-result-row {
+  break-inside: avoid;
+  display: grid;
+  grid-template-columns: 32px 1fr auto auto;
+  gap: 10px;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(47, 36, 27, 0.35);
+  font-size: 0.95rem;
+}
+
+.stage-rank {
+  font-family: "Playfair Display", serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.stage-rider {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.stage-rider span {
+  font-size: 0.75rem;
+  font-style: italic;
+  opacity: 0.75;
+}
+
+.stage-time {
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.stage-result-row .tie-controls {
+  display: flex;
+  gap: 3px;
+}
+
+.stage-result-row .tie-btn {
+  padding: 1px 5px;
+  font-size: 0.75rem;
+  color: #2f241b;
+  background: rgba(47, 36, 27, 0.08);
+  border: 1px solid rgba(47, 36, 27, 0.35);
+  border-radius: 4px;
+}
+
+.stage-result-row .tie-btn:disabled {
+  opacity: 0.35;
+}
+
+.stage-newspaper {
+  max-width: 850px;
+  margin: 24px auto 0 auto;
+}

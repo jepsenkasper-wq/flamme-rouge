@@ -998,44 +998,62 @@ onChange={async (e) => {
         ))}
       </select>
 
-      {/* INPUTS */}
+{/* STAGE LEADERBOARD */}
+<div className="stage-newspaper">
+  <div className="stage-newspaper-top">
+  <div className="stage-top-left">
+    Flamme Rouge
+  </div>
 
-
-<div className="stage-box">
-  <h3>🏁 Etape {stage}</h3>
-
-<div className="stage-card-wrapper">
-
-  {stageLeaderboard.map((r, i) => (
-    <div key={`${r.playerId}-${r.riderType}`} className="stage-row">
-
-      <div className="stage-info">
-      {i === 0 && "🥇 "}
-      {i === 1 && "🥈 "}
-      {i === 2 && "🥉 "}
-        {i + 1}. {r.playerName} ({r.riderType}) – {r.rawTime}
-      </div>
-
-      <div className="tie-controls">
-        <button
-          className="tie-btn"
-          disabled={!isAdmin}
-          onClick={() => updateTieBreak(r.playerId, r.riderType, -1)}
-        >
-          ↑
-        </button>
-
-        <button
-          className="tie-btn"
-          onClick={() => updateTieBreak(r.playerId, r.riderType, 1)}
-        >
-          ↓
-        </button>
-      </div>
-
+  <div className="stage-top-center">
+    <div className="stage-main-title">
+      Etapestilling
     </div>
-  ))}
+    <div className="stage-sub-title">
+      Dagens resultater
+    </div>
+  </div>
+
+  <div className="stage-top-right">
+    Etape {stage}
+  </div>
 </div>
+
+  <div className="stage-results-columns">
+    {stageLeaderboard.map((r, i) => (
+      <div
+        key={`${r.playerId}-${r.riderType}`}
+        className="stage-result-row"
+      >
+        <div className="stage-rank">{i + 1}</div>
+
+        <div className="stage-rider">
+          <strong>{r.playerName}</strong>
+          <span>{r.riderType}</span>
+        </div>
+
+        <div className="stage-time">{r.rawTime}</div>
+
+        <div className="tie-controls">
+          <button
+            className="tie-btn"
+            disabled={!isAdmin}
+            onClick={() => updateTieBreak(r.playerId, r.riderType, -1)}
+          >
+            ↑
+          </button>
+
+          <button
+            className="tie-btn"
+            disabled={!isAdmin}
+            onClick={() => updateTieBreak(r.playerId, r.riderType, 1)}
+          >
+            ↓
+          </button>
+        </div>
+      </div>
+    ))}
+  </div>
 </div>
 
       {players.map((p) => (
