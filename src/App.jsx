@@ -3,6 +3,10 @@ import "./App.css";
 import ridersImg from "./assets/rouleur-new.png";
 import rouleurNew from "./assets/rouleur-new.png";
 import sprinterNew from "./assets/sprinter-new.png";
+import yellowJerseyRider from "./assets/yellow-jersey-rider.png";
+import mountainJerseyRider from "./assets/mountain-jersey-rider.png";
+import sprintJerseyRider from "./assets/sprinter-jersey-rider.png";
+import teamRiders from "./assets/team-jersey-rider.png";
 import { supabase } from "./supabase";
 import { useState, useEffect } from "react";
 
@@ -1243,277 +1247,177 @@ onChange={async (e) => {
   }}
   className="dashboard-grid"
 >
-      {/* GC */}
-<div
-  style={{
-    backgroundColor: "#f8f8f8",
-    borderRadius: "14px",
-    padding: "16px",
-    boxShadow: "0 2px 6px rgba(0,0,0,0.08)",
-    border: "1px solid #e5e5e5",
-  }}
->
-    <h2
-  style={{
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: "8px",
-
-    backgroundColor: "#f5f5f5",
-    padding: "10px 12px",
-    borderRadius: "10px",
-    margin: "10px 0",
-
-    boxShadow: "0 1px 3px rgba(0,0,0,0.08)",
-  }}
->
-  <Jersey type="gc" />
-  Gul trøje
-</h2>
-      <ul
-  style={{
-    listStyle: "none",
-    padding: 0,
-    margin: 0,
-  }}
->
-        {gcClassification.map((r, i) => (
-      <li
-  key={i}
-  style={{
-    backgroundColor:
-      i === 0 ? "#fff7cc" : "transparent",
-
-    border:
-      i === 0
-        ? "2px solid #f2d200"
-        : "none",
-
-    borderRadius: "10px",
-
-    padding: "2px",
-
-    marginBottom: "6px",
-
-    fontWeight:
-      i === 0 ? "bold" : "normal",
-
-    boxShadow:
-      i === 0
-        ? "0 2px 6px rgba(0,0,0,0.12)"
-        : "none",
-    
-  }}
->
-
-  {i === 0 && <Jersey type="gc" />}
-  {r.player} - {r.rider} - {
-  i === 0
-    ? secondsToTime(r.time)
-    : "+" + secondsToTime(r.time - gcClassification[0].time)
-}
-</li>
-        ))}
-      </ul>
+{/* GC */}
+<div className="classification-card classification-card--yellow">
+  <div className="classification-header">
+    <div className="classification-portrait">
+  <img
+    src={yellowJerseyRider}
+    alt="Gul trøje"
+  />
 </div>
 
-      {/* MOUNTAIN */}
-<div
-  style={{
-    backgroundColor: "#f8f8f8",
-    borderRadius: "14px",
-    padding: "16px",
-    boxShadow: "0 2px 6px rgba(0,0,0,0.08)",
-    border: "1px solid #e5e5e5",
-  }}
->
-<h2
-  style={{
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: "8px",
+    <div className="classification-title-block">
+      
+      <h2 className="classification-title">
+        Den gule trøje
+      </h2>
 
-    backgroundColor: "#f5f5f5",
-    padding: "10px 12px",
-    borderRadius: "10px",
-    margin: "10px 0",
+      
+    </div>
+  </div>
 
-    boxShadow: "0 1px 3px rgba(0,0,0,0.08)",
-  }}
->
-  <Jersey type="mountain" />
-  Bjergtrøje
-</h2>
+  <div className="classification-list">
+    {gcClassification.map((r, i) => (
+      <div
+        key={i}
+        className={`classification-row ${i === 0 ? "classification-row--leader" : ""}`}
+      >
+        <div className="classification-rank">
+          {i + 1}
+        </div>
 
-      <ul
-  style={{
-    listStyle: "none",
-    padding: 0,
-    margin: 0,
-  }}
->
-        {mountainClassification.map((r, i) => (
-          <li
-  key={i}
-  style={{
-    backgroundColor: i === 0 ? "#fff0f0" : "transparent",
-border: i === 0 ? "2px solid #d33" : "none",
+        <div className="classification-rider">
+          <strong>{r.player}</strong>
+          <span>{r.rider}</span>
+        </div>
 
-    borderRadius: "10px",
+        <div className="classification-time">
+          {i === 0
+            ? secondsToTime(r.time)
+            : "+" + secondsToTime(r.time - gcClassification[0].time)}
+        </div>
+      </div>
+    ))}
+  </div>
+</div>
 
-    padding: "2px",
+     {/* MOUNTAIN */}
+<div className="classification-card classification-card--mountain">
+  <div className="classification-header">
+    <div className="classification-portrait">
+      <img
+        src={mountainJerseyRider}
+        alt="Bjergtrøje"
+      />
+    </div>
 
-    marginBottom: "6px",
+    <div className="classification-title-block">
+      <h2 className="classification-title">
+        Bjergtrøjen
+      </h2>
+    </div>
+  </div>
 
-    fontWeight:
-      i === 0 ? "bold" : "normal",
+  <div className="classification-list">
+    {mountainClassification.map((r, i) => (
+      <div
+        key={i}
+        className={`classification-row ${
+          i === 0 ? "classification-row--mountain-leader" : ""
+        }`}
+      >
+        <div className="classification-rank">
+          {i + 1}
+        </div>
 
-    boxShadow:
-      i === 0
-        ? "0 2px 6px rgba(0,0,0,0.12)"
-        : "none",
-  }}
->
-  {i === 0 && <Jersey type="mountain" />}
-  {r.player} - {r.rider} - {r.mountain} point
-</li>
-        ))}
-      </ul>
+        <div className="classification-rider">
+          <strong>{r.player}</strong>
+          <span>{r.rider}</span>
+        </div>
+
+        <div className="classification-time">
+          {r.mountain} point
+        </div>
+      </div>
+    ))}
+  </div>
 </div>
 
       {/* SPRINT */}
-<div
-  style={{
-    backgroundColor: "#f8f8f8",
-    borderRadius: "14px",
-    padding: "16px",
-    boxShadow: "0 2px 6px rgba(0,0,0,0.08)",
-    border: "1px solid #e5e5e5",
-  }}
->
-     <h2
-  style={{
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: "8px",
+<div className="classification-card classification-card--sprint">
+  <div className="classification-header">
+    <div className="classification-portrait">
+      <img
+        src={sprintJerseyRider}
+        alt="Sprinttrøje"
+      />
+    </div>
 
-    backgroundColor: "#f5f5f5",
-    padding: "10px 12px",
-    borderRadius: "10px",
-    margin: "10px 0",
+    <div className="classification-title-block">
+      <h2 className="classification-title">
+        Pointtrøjen
+      </h2>
+    </div>
+  </div>
 
-    boxShadow: "0 1px 3px rgba(0,0,0,0.08)",
-  }}
->
-  <Jersey type="sprint" />
-  Pointtrøje
-</h2>
+  <div className="classification-list">
+    {sprintClassification.map((r, i) => (
+      <div
+        key={i}
+        className={`classification-row ${
+          i === 0 ? "classification-row--sprint-leader" : ""
+        }`}
+      >
+        <div className="classification-rank">
+          {i + 1}
+        </div>
 
-      <ul
-  style={{
-    listStyle: "none",
-    padding: 0,
-    margin: 0,
-  }}
->
-        {sprintClassification.map((r, i) => (
-        <li
-  key={i}
-  style={{
-    backgroundColor: i === 0 ? "#efffed" : "transparent",
-border: i === 0 ? "2px solid #2fa84f" : "none",
+        <div className="classification-rider">
+          <strong>{r.player}</strong>
+          <span>{r.rider}</span>
+        </div>
 
-    borderRadius: "10px",
-
-    padding: "2px",
-
-    marginBottom: "6px",
-
-    fontWeight:
-      i === 0 ? "bold" : "normal",
-
-    boxShadow:
-      i === 0
-        ? "0 2px 6px rgba(0,0,0,0.12)"
-        : "none",
-  }}
->
-  {i === 0 && <Jersey type="sprint" />}
-  {r.player} - {r.rider} - {r.sprint} point
-</li>
-        ))}
-      </ul>
+        <div className="classification-time">
+          {r.sprint} point
+        </div>
+      </div>
+    ))}
+  </div>
 </div>
 
       {/* TEAM */}
-<div
-  style={{
-    backgroundColor: "#f8f8f8",
-    borderRadius: "14px",
-    padding: "16px",
-    boxShadow: "0 2px 6px rgba(0,0,0,0.08)",
-    border: "1px solid #e5e5e5",
-  }}
->
-   <h2
-  style={{
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: "8px",
+<div className="classification-card classification-card--team">
+  <div className="classification-header">
+    <div className="classification-portrait classification-portrait--team">
+      <img
+        src={teamRiders}
+        alt="Holdkonkurrence"
+      />
+    </div>
 
-    backgroundColor: "#f5f5f5",
-    padding: "10px 12px",
-    borderRadius: "10px",
-    margin: "10px 0",
+    <div className="classification-title-block">
+      <h2 className="classification-title">
+        Holdkonkurrence
+      </h2>
+    </div>
+  </div>
 
-    boxShadow: "0 1px 3px rgba(0,0,0,0.08)",
-  }}
->
-  👥 Holdkonkurrence
-</h2>
+  <div className="classification-list">
+    {teamClassification.map((t, i) => (
+      <div
+        key={i}
+        className={`classification-row ${
+          i === 0 ? "classification-row--team-leader" : ""
+        }`}
+      >
+        <div className="classification-rank">
+          {i + 1}
+        </div>
 
-      <ul
-  style={{
-    listStyle: "none",
-    padding: 0,
-    margin: 0,
-  }}
->
-        {teamClassification.map((t, i) => (
-       <li
-  key={i}
-  style={{
-    backgroundColor: i === 0 ? "#f2f2f2" : "transparent",
-border: i === 0 ? "2px solid #555" : "none",
+        <div className="classification-rider">
+          <strong>{t.player}</strong>
+          <span>hold</span>
+        </div>
 
-    borderRadius: "10px",
-
-    padding: "2px",
-
-    marginBottom: "6px",
-
-    fontWeight:
-      i === 0 ? "bold" : "normal",
-
-    boxShadow:
-      i === 0
-        ? "0 2px 6px rgba(0,0,0,0.12)"
-        : "none",
-  }}
->
-  {i === 0 && "👥 "}
-  {t.player} - {
-  i === 0
-    ? secondsToTime(t.time)
-    : "+" + secondsToTime(t.time - teamClassification[0].time)
-}
-</li>
-        ))}
-      </ul>
+        <div className="classification-time">
+          {i === 0
+            ? secondsToTime(t.time)
+            : "+" + secondsToTime(t.time - teamClassification[0].time)}
+        </div>
+      </div>
+    ))}
+  </div>
 </div>
 </div>
 
