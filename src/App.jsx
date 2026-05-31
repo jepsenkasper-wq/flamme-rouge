@@ -1257,12 +1257,14 @@ onChange={async (e) => {
       ))}
 <div
   style={{
-    display: "grid",
-    gridTemplateColumns: "repeat(2, 1fr)",
-    gap: "20px",
-    marginTop: "20px",
-    alignItems: "start",
-  }}
+  display: "grid",
+  gridTemplateColumns: "repeat(2, auto)",
+  justifyContent: "center",
+  columnGap: "10px",
+  rowGap: "10px",
+  marginTop: "20px",
+  alignItems: "start",
+}}
   className="dashboard-grid"
 >
 {/* GC */}
@@ -1406,7 +1408,7 @@ onChange={async (e) => {
 
     <div className="classification-title-block">
       <h2 className="classification-title">
-        Holdkonkurrence
+        Holdtid
       </h2>
     </div>
   </div>
