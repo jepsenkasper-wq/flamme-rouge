@@ -113,6 +113,7 @@ const [newGameAdminCode, setNewGameAdminCode] = useState("");
 const [adminInput, setAdminInput] = useState("");
 const [unlockedGames, setUnlockedGames] = useState({});
 const [lockCodeInput, setLockCodeInput] = useState("");
+const [showDeleteGameConfirm, setShowDeleteGameConfirm] = useState(false);
 const activeGame = games[currentGame] ?? null;
 const players = activeGame?.players ?? [];
 const stage = activeGame?.stage ?? 1;
@@ -376,15 +377,14 @@ async function deleteGame() {
   if (!isAdmin) return;
   if (!currentGame) return;
 
-  const ok = window.confirm("Vil du slette dette spil?");
-  if (!ok) return;
-
   const { error } = await supabase
     .from("games")
     .delete()
     .eq("id", currentGame);
 
   console.log("DELETE ERROR:", error);
+
+  setShowDeleteGameConfirm(false);
 }
 
 function deletePlayer(playerId) {
@@ -881,7 +881,7 @@ const sprintClassification = [...riderStats].sort(
 )}
 
 <button
-  onClick={deleteGame}
+  onClick={() => setShowDeleteGameConfirm(true)}
   disabled={!isAdmin}
   style={{
     opacity: isAdmin ? 1 : 0.4,
@@ -953,8 +953,7 @@ const sprintClassification = [...riderStats].sort(
   alignItems: "center",
   gap: "4px",
   padding: "4px 8px",
-  background: "#f2f2f2",
-  borderRadius: "8px",
+  background: "transparent",
 }}
     >
       <span>{p.name}</span>
@@ -1441,66 +1440,36 @@ onChange={async (e) => {
 </div>
 </div>
 
-      {/* FINAL */}
-    <h2>🏆 Samlet stilling</h2>
+     <h2 className="podium-title">
+    Samlet stilling
+</h2>
 
-<div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
-  
-  {/* 2. plads */}
-  {finalClassification[1] && (
-    <div style={{
-      flex: 1,
-      background: "#c0c0c0",
-      padding: "10px",
-      borderRadius: "10px",
-      textAlign: "center",
-      height: "120px",
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "center"
-    }}>
-      <div style={{ fontSize: "24px" }}>🥈</div>
-      <strong>{finalClassification[1].player}</strong>
-      <div>{finalClassification[1].total} point</div>
-    </div>
-  )}
+<div className="podium-container">
 
-  {/* 1. plads */}
+  <img
+  src="/podium.png"
+  alt="Podie"
+  className="podium-image"
+/>
+
   {finalClassification[0] && (
-    <div style={{
-      flex: 1.2,
-      background: "gold",
-      padding: "10px",
-      borderRadius: "10px",
-      textAlign: "center",
-      height: "150px",
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "center",
-      boxShadow: "0 4px 10px rgba(0,0,0,0.2)"
-    }}>
-      <div style={{ fontSize: "30px" }}>🥇</div>
+    <div className="podium-label podium-first">
       <strong>{finalClassification[0].player}</strong>
-      <div>{finalClassification[0].total} point</div>
+      <span>{finalClassification[0].total} point</span>
     </div>
   )}
 
-  {/* 3. plads */}
+  {finalClassification[1] && (
+    <div className="podium-label podium-second">
+      <strong>{finalClassification[1].player}</strong>
+      <span>{finalClassification[1].total} point</span>
+    </div>
+  )}
+
   {finalClassification[2] && (
-    <div style={{
-      flex: 1,
-      background: "#cd7f32",
-      padding: "10px",
-      borderRadius: "10px",
-      textAlign: "center",
-      height: "100px",
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "center"
-    }}>
-      <div style={{ fontSize: "20px" }}>🥉</div>
+    <div className="podium-label podium-third">
       <strong>{finalClassification[2].player}</strong>
-      <div>{finalClassification[2].total} point</div>
+      <span>{finalClassification[2].total} point</span>
     </div>
   )}
 
@@ -1556,6 +1525,31 @@ onChange={async (e) => {
 
         <button onClick={cancelDelete}>
           Nej
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+{showDeleteGameConfirm && (
+  <div className="confirm-overlay">
+    <div className="confirm-box">
+      <h3>Slet spil?</h3>
+
+      <p>
+        Er du sikker på, at du vil slette dette spil?
+      </p>
+
+      <div className="confirm-buttons">
+        <button
+          onClick={() => setShowDeleteGameConfirm(false)}
+        >
+          Annuller
+        </button>
+
+        <button
+          onClick={deleteGame}
+        >
+          Slet spil
         </button>
       </div>
     </div>

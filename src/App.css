@@ -850,3 +850,110 @@ input, select {
   max-width: 850px;
   margin: 24px auto 0 auto;
 }
+
+.podium-container {
+  position: relative;
+  max-width: 1150px;
+  margin: 20px auto;
+}
+
+.podium-image {
+  width: 100%;
+  display: block;
+  max-height: 72vh;
+  object-fit: contain;
+}
+
+.podium-label {
+  position: absolute;
+
+  display: flex;
+  flex-direction: column;
+
+  text-align: center;
+
+  color: #2f241b;
+
+  text-shadow: 0 1px 2px rgba(255,255,255,0.7);
+}
+.podium-first {
+  left: 50%;
+  bottom: 18%;
+
+  transform: translateX(-50%);
+
+  width: 220px;
+}
+
+.podium-first strong {
+  font-size: 1.8rem;
+  font-family: "Playfair Display", serif;
+}
+
+.podium-first span {
+  font-size: 1.1rem;
+}
+.podium-second {
+  left: 22%;
+  bottom: 9%;
+
+  transform: translateX(7%);
+
+  width: 180px;
+}
+
+.podium-second strong {
+  font-size: 1.4rem;
+}
+.podium-third {
+  left: 78%;
+  bottom: 7.5%;
+
+  transform: translateX(-110%);
+  
+
+  width: 180px;
+}
+
+.podium-third strong {
+  font-size: 1.4rem;
+}
+.podium-title {
+  margin-top: 50px;
+  margin-bottom: 20px;
+}
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+
+  background: rgba(0,0,0,0.35);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 9999;
+}
+
+.confirm-box {
+  background: #f3f3f3;
+
+  border: 2px solid rgba(96,65,32,0.28);
+  border-radius: 18px;
+
+  padding: 24px;
+
+  text-align: center;
+
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+
+  max-width: 400px;
+}
+
+.confirm-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+
+  margin-top: 20px;
+}
