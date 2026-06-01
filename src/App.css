@@ -957,3 +957,61 @@ input, select {
 
   margin-top: 20px;
 }
+.rider-content {
+  position: relative;
+}
+
+.fatigue-toggle {
+  position: absolute;
+  right: 10px;
+  bottom: 8px;
+
+  background: transparent;
+  border: none;
+  color: rgba(47, 36, 27, 0.75);
+
+  font-size: 0.78rem;
+  font-style: italic;
+  cursor: pointer;
+}
+
+.fatigue-toggle:hover {
+  text-decoration: underline;
+}
+
+.fatigue-popover {
+  position: absolute;
+  right: 10px;
+  bottom: 34px;
+
+  background: #fbf1d8;
+  border: 1px solid rgba(96, 65, 32, 0.35);
+  border-radius: 12px;
+
+  padding: 10px;
+  width: 170px;
+
+  box-shadow: 0 6px 18px rgba(56, 38, 20, 0.18);
+  z-index: 20;
+}
+
+.fatigue-popover label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  font-size: 0.8rem;
+  color: #2f241b;
+}
+
+.fatigue-popover input {
+  width: 100%;
+}
+.fatigue-toggle {
+  bottom: -40px;
+}
+.fatigue-image {
+  display: block;
+  width: 90px;
+  margin: -4px auto 6px;
+}
