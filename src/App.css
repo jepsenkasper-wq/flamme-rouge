@@ -182,7 +182,7 @@
     border-right-color: var(--border);
   }
 }
-@media (max-width: 768px) {
+@media (max-width: 430px) {
   .dashboard-grid {
     grid-template-columns: 1fr;
     
@@ -506,6 +506,7 @@ input, select {
   width: 390px;
   margin-left: auto;
   margin-right: auto;
+  
 }
 
 .classification-header {
@@ -1014,4 +1015,339 @@ input, select {
   display: block;
   width: 90px;
   margin: -4px auto 6px;
+}
+@media (max-width: 768px) {
+  body {
+    overflow-x: hidden;
+  }
+
+  #root {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  input,
+  select,
+  button {
+    max-width: 100%;
+  }
+}
+@media (max-width: 430px) {
+
+  .dashboard-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+@media (max-width: 768px) {
+  .classification-card {
+    padding: 0px;
+  }
+}
+@media (max-width: 768px) {
+  .classification-title {
+    font-size: 2rem;
+  }
+}
+@media (max-width: 768px) {
+  .classification-portrait {
+    width: 95px;
+    height: 95px;
+    
+  }
+}
+
+@media (max-width: 768px) {
+  .classification-card--yellow .classification-portrait {
+    width: 75px;
+    height: 75px;
+    transform: translateY(0px);
+    transform: translateX(10px);
+  }
+  .classification-card--mountain .classification-portrait {
+    width: 70px;
+    height: 70px;
+    transform: scale(1.0) translateY(-5px) translateX(20px) !important;
+    
+  }
+}
+@media (max-width: 768px) {
+  .stage-newspaper {
+    margin-left: 8px;
+    margin-right: 8px;
+    padding: 12px;
+  }
+
+  .stage-newspaper-top {
+    grid-template-columns: 1fr;
+    gap: 2px;
+    text-align: center;
+  }
+
+  .stage-top-left,
+  .stage-top-right {
+    display: none;
+  }
+
+  .stage-main-title {
+    font-size: 2.1rem;
+    line-height: 1;
+  }
+
+  .stage-sub-title {
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
+  }
+
+  .stage-results-columns {
+    column-count: 1;
+    column-gap: 0;
+  }
+
+  .stage-result-row {
+    grid-template-columns: 30px 1fr auto auto;
+    gap: 8px;
+    padding: 6px 0;
+  }
+
+  .stage-rider strong {
+    font-size: 1rem;
+  }
+
+  .stage-time {
+    font-size: 0.95rem;
+  }
+}
+@media (max-width: 768px) {
+  .rider-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 100%;
+    padding: 12px;
+    gap: 8px;
+    padding-bottom:0px;
+  }
+
+  .rider-section::before {
+    width: 100%;
+    height: 120px;
+
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  .sprinter-section::before {
+    background-size: 40%;
+  }
+
+  .rouleur-section::before {
+    background-size: 55%;
+  }
+
+  .rider-content {
+    width: 100%;
+  }
+
+  .rider-input-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    padding: 0 6px;
+    box-sizing: border-box;
+  }
+
+  .stat-field {
+    box-sizing: border-box;
+    min-width: 0;
+  }
+    .rider-title {
+    font-size: 2.2rem;
+    margin: 6px 0 10px;
+  }
+   .stat-field {
+    padding: 8px;
+  }
+  .fatigue-toggle {
+    position: absolute;
+
+    top: 22px;
+    left: 2px;
+
+    right: auto;
+    bottom: auto;
+
+    font-size: 0.75rem;
+  }
+}
+@media (max-width: 768px) {
+  .podium-label {
+    width: 120px;
+  }
+
+  .podium-first {
+    left: 50%;
+    bottom: 18%;
+  }
+
+  .podium-second {
+    left: 8%;
+    bottom: 9%;
+  }
+
+  .podium-third {
+    left: 93%;
+    bottom: 8%;
+  }
+
+  .podium-first strong,
+  .podium-second strong,
+  .podium-third strong {
+    font-size: 1rem;
+  }
+
+  .podium-first span,
+  .podium-second span,
+  .podium-third span {
+    font-size: 0.8rem;
+  }
+}
+@media (max-width: 768px) {
+  .podium-label {
+    width: 90px;
+  }
+
+  .podium-label strong {
+    font-size: 0.85rem;
+    line-height: 1;
+  }
+
+  .podium-label span {
+    font-size: 0.7rem;
+    line-height: 1;
+  }
+}
+@media (max-width: 768px) {
+
+  .player-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    justify-items: center;
+  }
+}
+.game-switcher {
+  display: inline-flex;
+  gap: 0;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .game-switcher {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+  }
+
+  .game-switcher select {
+    width: 230px;
+    max-width: 90vw;
+  }
+}
+@media (max-width: 768px) {
+  .player-list {
+    display: grid !important;
+    grid-template-columns: repeat(2, auto);
+    justify-content: center;
+    column-gap: 26px;
+    row-gap: 8px;
+  }
+
+  .player-list li span {
+    font-size: 0.95rem;
+  }
+}
+.fatigue-toggle {
+  background: transparent;
+  border: none;
+  color: rgba(47, 36, 27, 0.75);
+  font-size: 0.78rem;
+  font-style: italic;
+  cursor: pointer;
+  margin: -6px 0 8px;
+  transform: translateX(20px);
+  transform: translateY(40px);
+}
+
+@media (min-width: 769px) {
+  .rider-content {
+    position: relative;
+  }
+
+  .fatigue-toggle {
+    position: absolute;
+    right: 10px;
+    bottom: 8px;
+    margin: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .fatigue-toggle {
+    position: static;
+    display: block;
+    margin: -8px auto 8px;
+    font-size: 0.75rem;
+    text-align: center;
+    transform: translateX(80px)
+  }
+}
+@media (max-width: 430px) {
+  .dashboard-grid {
+    padding-left: 8px;
+    padding-right: 8px;
+    box-sizing: border-box;
+  }
+
+  .classification-card {
+    width: 100% !important;
+    max-width: calc(100vw - 24px) !important;
+    box-sizing: border-box;
+  }
+}
+@media (min-width: 431px) and (max-width: 1024px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    justify-content: center;
+    gap: 10px;
+    padding-left: 12px;
+    padding-right: 12px;
+    box-sizing: border-box;
+  }
+
+  .classification-card {
+    width: auto !important;
+    max-width: 100% !important;
+    box-sizing: border-box;
+  }
+}
+@media (min-width: 431px) and (max-width: 1024px) {
+  .podium-first {
+    left: 50%;
+    bottom: 18%;
+  }
+
+  .podium-second {
+    left: 15%;
+    bottom: 10%;
+  }
+
+  .podium-third {
+    left: 85%;
+    bottom: 9%;
+  }
+
+  .podium-label {
+    width: 110px;
+  }
 }

@@ -867,20 +867,22 @@ const sprintClassification = [...riderStats].sort(
   onChange={(e) => setNewGameAdminCode(e.target.value)}
 />
 
-<button onClick={createNewGame}>
-  Nyt spil
-</button>
+<div className="game-switcher">
+  <button onClick={createNewGame}>
+    Nyt spil
+  </button>
 
-<select
-  value={currentGame ?? ""}
-  onChange={(e) => switchGame(e.target.value)}
->
-  {Object.entries(games).map(([id, game]) => (
-  <option key={id} value={id}>
-    {game.name || "Unavngivet spil"} {game.admin_code ? "🔒" : ""}
-  </option>
-))}
-</select>
+  <select
+    value={currentGame ?? ""}
+    onChange={(e) => switchGame(e.target.value)}
+  >
+    {Object.entries(games).map(([id, game]) => (
+      <option key={id} value={id}>
+        {game.name || "Unavngivet spil"} {game.admin_code ? "🔒" : ""}
+      </option>
+    ))}
+  </select>
+</div>
 
 {isLocked && !isAdmin && (
   <div style={{ marginTop: "10px", marginBottom: "10px" }}>
@@ -960,6 +962,7 @@ const sprintClassification = [...riderStats].sort(
 </button>
 
 <ul
+  className="player-list"
   style={{
     display: "flex",
     flexWrap: "wrap",
