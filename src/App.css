@@ -268,7 +268,7 @@
 }
 
 body {
-  background: #e4d5b6;
+  background: #f9edce;
   color: var(--ink);
 }
 
@@ -318,7 +318,7 @@ input, select {
   background:linear-gradient(
     rgba(255,255,255,0.05),
     rgba(0,0,0,0.02)
-  ), #efe3c8;
+  ), #dac9a2;
   border: 1px solid var(--border);
   border-top: 4px solid color-mix(in srgb, var(--player-color) 70%, #8b6f47);
 
