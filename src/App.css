@@ -1,3 +1,7 @@
+/* =========================
+   1. BASE / GLOBAL
+========================= */
+
 .counter {
   font-size: 16px;
   padding: 5px 10px;
@@ -187,6 +191,17 @@
     grid-template-columns: 1fr;
     
   }
+
+ /* =========================
+  2. TOP / GAME CONTROLS
+========================= */
+
+.game-switcher {
+  display: inline-flex;
+  gap: 0;
+  align-items: center;
+}
+
 }
 .tie-btn {
   font-size: 10px;
@@ -194,12 +209,6 @@
   border: none;
   background: transparent;
   cursor: pointer;
-}
-.stage-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 4px 0;
 }
 
 .stage-card {
@@ -259,7 +268,7 @@
 }
 
 body {
-  background: var(--paper);
+  background: #e4d5b6;
   color: var(--ink);
 }
 
@@ -290,12 +299,29 @@ input, select {
   color: var(--ink);
 }
 
+.svg-icon {
+  width: 22px;
+  height: 22px;
+  display: block;
+}
+
+/* =========================
+   3. PLAYER CARDS
+========================= */
+
 .player-card {
-  margin: 12px 0;
+  max-width: 850px;
+  margin: 12px auto;
+
   border-radius: 14px;
-  background: var(--paper-light);
+  
+  background:linear-gradient(
+    rgba(255,255,255,0.05),
+    rgba(0,0,0,0.02)
+  ), #efe3c8;
   border: 1px solid var(--border);
   border-top: 4px solid color-mix(in srgb, var(--player-color) 70%, #8b6f47);
+
   box-shadow: 0 6px 14px rgba(59, 47, 42, 0.16);
   overflow: hidden;
 }
@@ -307,8 +333,6 @@ input, select {
   text-transform: none;
   letter-spacing: 1px;
 }
-
-
 
 .player-card input {
   margin: 3px;
@@ -326,58 +350,9 @@ input, select {
   font-size: 32px;
   margin: 0 0 14px;
   line-height: 1;
-}
-
-
-.sprinter-title {
-  color: var(--red);
-}
-
-.rouleur-title {
-  color: var(--olive);
-}
-
-.rider-section {
-  padding: 10px;
-  margin: 0 auto 14px;
-  border-radius: 10px;
-  max-width: 760px;
-  border: 1px solid var(--border);
-  background: rgba(255, 247, 232, 0.55);
-}
-
-.sprinter-section {
-  border-left: 4px solid var(--red);
-}
-
-.rouleur-section {
-  border-left: 4px solid var(--olive);
-}
-.sprinter-section input {
-  border: 1.5px solid rgba(168, 58, 36, 0.75);
-  background: rgba(168, 58, 36, 0.10);
-}
-
-.sprinter-section input:focus {
-  border-color: var(--red);
-  outline: 2px solid rgba(168, 58, 36, 0.18);
-}
-
-.rouleur-section input {
-  border: 1.5px solid rgba(98, 98, 74, 0.75);
-  background: rgba(98, 98, 74, 0.10);
-}
-
-.rouleur-section input:focus {
-  border-color: var(--olive);
-  outline: 2px solid rgba(98, 98, 74, 0.18);
-}
-.sprinter-section {
-  background: rgba(168, 58, 36, 0.08);
-}
-
-.rouleur-section {
-  background: rgba(98, 98, 74, 0.08);
+  text-shadow:
+    0 0 8px rgba(251,241,216,0.9),
+    0 0 16px rgba(251,241,216,0.9);
 }
 
 .rider-section {
@@ -385,6 +360,16 @@ input, select {
   grid-template-columns: 220px 1fr;
   gap: 24px;
   align-items: center;
+
+  padding: 10px;
+  margin: 0 auto 14px;
+
+  max-width: 760px;
+
+  border: 1px solid var(--border);
+  border-radius: 10px;
+
+  background: rgba(255, 247, 232, 0.55);
 }
 
 .rider-section::before {
@@ -398,21 +383,13 @@ input, select {
   border-radius: 12px;
   background-color: transparent;
 }
-
-.sprinter-section::before {
-  background-position: center;
-  background-size: 80%;
-}
-
-.rouleur-section::before {
-  background-position: center;
-  background-size: 120%;
-}
-
 .rider-content {
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  position: relative;
+  z-index: 2;
 }
 
 .rider-input-grid {
@@ -426,13 +403,9 @@ input, select {
   width: 100%;
   box-sizing: border-box;
 }
-.player-card {
-  max-width: 850px;
-  margin: 12px auto;
-}
 
 .stat-field {
-  background: rgba(255, 247, 232, 0.7);
+  background: rgba(251, 241, 216, 0.92);
   border: 1px solid currentColor;
   border-radius: 10px;
   padding: 8px;
@@ -465,48 +438,121 @@ input, select {
   padding: 3px 4px;
   text-align: center;
 }
+
+/* =========================
+   4. SPRINTER CARD
+========================= */
+.sprinter-title {
+  color: var(--red);
+}
+
+.sprinter-section {
+  border-left: 4px solid var(--red);
+
+  background: rgba(168, 58, 36, 0.08);
+
+  position: relative;
+  overflow: visible;
+}
+
+.sprinter-section::before {
+  background-position: center -35px;
+  background-size: 80%;
+
+  position: relative;
+  z-index: 2;
+}
+
+.sprinter-section::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  background-image: url("/sprinter-watermark.png");
+  background-repeat: no-repeat;
+
+  background-position: 60% 75%;
+  background-size: 100% auto;
+
+  opacity: 0.8;
+
+  pointer-events: none;
+  z-index: 1;
+}
+
+.sprinter-section input {
+  border: 1.5px solid rgba(168, 58, 36, 0.75);
+  background: rgba(168, 58, 36, 0.10);
+}
+
+.sprinter-section input:focus {
+  border-color: var(--red);
+  outline: 2px solid rgba(168, 58, 36, 0.18);
+}
+
+.sprinter-section .rider-content {
+  position: relative;
+  z-index: 2;
+}
 .sprinter-section .stat-field {
   color: var(--red);
+}
+.sprinter-section .stat-icon {
+  color: var(--red);
+}
+
+/* =========================
+   5. ROULEUR CARD
+========================= */
+.rouleur-title {
+  color: var(--olive);
+}
+
+.rouleur-section {
+  border-left: 4px solid var(--olive);
+  background:
+    url("/rouleur-watermark.png"),
+    rgba(98, 98, 74, 0.08);
+
+  background-repeat: no-repeat;
+  background-position: 90% center;
+  background-size: 100% auto;
+}
+
+.rouleur-section input {
+  border: 1.5px solid rgba(98, 98, 74, 0.75);
+  background: rgba(98, 98, 74, 0.10);
+}
+
+.rouleur-section input:focus {
+  border-color: var(--olive);
+  outline: 2px solid rgba(98, 98, 74, 0.18);
+}
+
+.rouleur-section::before {
+  background-position: center 10px;
+  background-size: 120%;
 }
 
 .rouleur-section .stat-field {
   color: var(--olive);
 }
-.svg-icon {
-  width: 22px;
-  height: 22px;
-  display: block;
-}
-
-.sprinter-section .stat-icon {
-  color: var(--red);
-}
 
 .rouleur-section .stat-icon {
   color: var(--olive);
 }
+
+/* =========================
+   6. CLASSIFICATION CARDS
+========================= */
+
 .classification-card {
   background: #fbf1d8;
   border: 2px solid rgba(96, 65, 32, 0.28);
   border-radius: 18px;
   padding: 16px;
   box-shadow: 0 4px 12px rgba(56, 38, 20, 0.14);
-  color: #2f241b;
-  
-}
-
-.classification-card--yellow {
-  border-color: #d6b531;
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255, 245, 187, 0.55),
-      rgba(251, 241, 216, 0.95)
-    );
-  width: 390px;
-  margin-left: auto;
-  margin-right: auto;
-  
+  color: #2f241b; 
 }
 
 .classification-header {
@@ -618,17 +664,35 @@ input, select {
   color: #7a6750;
   font-style: italic;
 }
+.classification-title-block {
+  text-align: center;
+  transform: translateX(-25px);
+}
 
+/* =========================
+   7. INDIVIDUAL CLASSIFICATIONS
+========================= */
+
+.classification-card--yellow {
+  border-color: #d6b531;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 245, 187, 0.55),
+      rgba(251, 241, 216, 0.95)
+    );
+  width: 390px;
+  margin-left: auto;
+  margin-right: auto;
+  
+}
 .classification-time {
   font-weight: 700;
   white-space: nowrap;
   color: #3a2a1d;
   font-size: 0.95rem;
 }
-.classification-title-block {
-  text-align: center;
-  transform: translateX(-25px);
-}
+
 .classification-card--mountain {
   border-color: #d33a32;
 
@@ -715,9 +779,16 @@ input, select {
   transform: translateX(-30px);
 }
 
+/* =========================
+   8. STAGE NEWSPAPER
+========================= */
+
 .stage-newspaper {
   position: relative;
   overflow: hidden;
+
+  max-width: 850px;
+  margin: 24px auto 0 auto;
 }
 
 .stage-newspaper > * {
@@ -847,10 +918,9 @@ input, select {
   opacity: 0.35;
 }
 
-.stage-newspaper {
-  max-width: 850px;
-  margin: 24px auto 0 auto;
-}
+/* =========================
+   9. FINAL PODIUM
+========================= */
 
 .podium-container {
   position: relative;
@@ -923,6 +993,71 @@ input, select {
   margin-top: 50px;
   margin-bottom: 20px;
 }
+/* =========================
+   10. FATIGUE CARDS
+========================= */
+
+.fatigue-toggle {
+  position: absolute;
+  right: 10px;
+  bottom: -40px;
+
+  background: rgba(255, 247, 232, 0.85);
+  border: none;
+
+  color: rgba(47, 36, 27, 0.75);
+
+  font-size: 0.78rem;
+  font-style: italic;
+  cursor: pointer;
+
+  margin: -6px 0 8px;
+
+  transform: translateY(40px);
+}
+
+.fatigue-toggle:hover {
+  text-decoration: underline;
+}
+
+.fatigue-popover {
+  position: absolute;
+  right: 10px;
+  bottom: 34px;
+
+  background: #fbf1d8;
+  border: 1px solid rgba(96, 65, 32, 0.35);
+  border-radius: 12px;
+
+  padding: 10px;
+  width: 170px;
+
+  box-shadow: 0 6px 18px rgba(56, 38, 20, 0.18);
+  z-index: 999;
+}
+
+.fatigue-popover label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  font-size: 0.8rem;
+  color: #2f241b;
+}
+
+.fatigue-popover input {
+  width: 100%;
+}
+
+.fatigue-image {
+  display: block;
+  width: 90px;
+  margin: -4px auto 6px;
+}
+
+/* =========================
+   11. MODALS / CONFIRM BOXES
+========================= */
 .confirm-overlay {
   position: fixed;
   inset: 0;
@@ -958,63 +1093,31 @@ input, select {
 
   margin-top: 20px;
 }
-.rider-content {
-  position: relative;
+
+      /* Media */
+@media (max-width: 768px) {
+  .sprinter-section {
+    background: rgba(168, 58, 36, 0.08);
+  }
+  .rouleur-section {
+    background: rgba(98, 98, 74, 0.08);
+  }
+
+ @media (max-width: 768px) {
+
+  .sprinter-section::after {
+    content: none;
+  }
+
 }
 
-.fatigue-toggle {
-  position: absolute;
-  right: 10px;
-  bottom: 8px;
-
-  background: transparent;
-  border: none;
-  color: rgba(47, 36, 27, 0.75);
-
-  font-size: 0.78rem;
-  font-style: italic;
-  cursor: pointer;
 }
 
-.fatigue-toggle:hover {
-  text-decoration: underline;
-}
-
-.fatigue-popover {
-  position: absolute;
-  right: 10px;
-  bottom: 34px;
-
-  background: #fbf1d8;
-  border: 1px solid rgba(96, 65, 32, 0.35);
-  border-radius: 12px;
-
-  padding: 10px;
-  width: 170px;
-
-  box-shadow: 0 6px 18px rgba(56, 38, 20, 0.18);
-  z-index: 20;
-}
-
-.fatigue-popover label {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-
-  font-size: 0.8rem;
-  color: #2f241b;
-}
-
-.fatigue-popover input {
-  width: 100%;
-}
-.fatigue-toggle {
-  bottom: -40px;
-}
-.fatigue-image {
-  display: block;
-  width: 90px;
-  margin: -4px auto 6px;
+@media (max-width: 430px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    
+  }      
 }
 @media (max-width: 768px) {
   body {
@@ -1038,11 +1141,7 @@ input, select {
     grid-template-columns: 1fr !important;
   }
 }
-@media (max-width: 768px) {
-  .classification-card {
-    padding: 0px;
-  }
-}
+
 @media (max-width: 768px) {
   .classification-title {
     font-size: 2rem;
@@ -1158,14 +1257,13 @@ input, select {
   .stat-field {
     box-sizing: border-box;
     min-width: 0;
+    padding: 8px
   }
     .rider-title {
     font-size: 2.2rem;
     margin: 6px 0 10px;
   }
-   .stat-field {
-    padding: 8px;
-  }
+
   .fatigue-toggle {
     position: absolute;
 
@@ -1225,20 +1323,6 @@ input, select {
     line-height: 1;
   }
 }
-@media (max-width: 768px) {
-
-  .player-list {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-    justify-items: center;
-  }
-}
-.game-switcher {
-  display: inline-flex;
-  gap: 0;
-  align-items: center;
-}
 
 @media (max-width: 768px) {
   .game-switcher {
@@ -1248,7 +1332,6 @@ input, select {
     gap: 6px;
     margin-top: 4px;
   }
-
   .game-switcher select {
     width: 230px;
     max-width: 90vw;
@@ -1266,17 +1349,6 @@ input, select {
   .player-list li span {
     font-size: 0.95rem;
   }
-}
-.fatigue-toggle {
-  background: transparent;
-  border: none;
-  color: rgba(47, 36, 27, 0.75);
-  font-size: 0.78rem;
-  font-style: italic;
-  cursor: pointer;
-  margin: -6px 0 8px;
-  transform: translateX(20px);
-  transform: translateY(40px);
 }
 
 @media (min-width: 769px) {
@@ -1302,6 +1374,15 @@ input, select {
     transform: translateX(80px)
   }
 }
+
+/* Mobil og tablet: mindre padding i klassementskort */
+@media (max-width: 1024px) {
+  .classification-card {
+    padding: 0;
+  }
+}
+
+/* Små telefoner */
 @media (max-width: 430px) {
   .dashboard-grid {
     padding-left: 8px;
@@ -1315,6 +1396,8 @@ input, select {
     box-sizing: border-box;
   }
 }
+
+/* Tablet */
 @media (min-width: 431px) and (max-width: 1024px) {
   .dashboard-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
@@ -1351,3 +1434,8 @@ input, select {
     width: 110px;
   }
 }
+
+
+
+
+
