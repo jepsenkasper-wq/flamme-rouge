@@ -525,6 +525,13 @@ async function updateResult(playerId, rider, field, value) {
   return fatigueCards?.[playerId]?.[rider] ?? 0;
 }
 
+function getFatigueImage(cards) {
+  if (cards >= 5) return "/fatigue-4.png";
+  if (cards >= 4) return "/fatigue-3.png";
+  if (cards >= 2) return "/fatigue-2.png";
+  return "/fatigue-1.png";
+}
+
 async function updateFatigue(playerId, rider, value) {
   if (!isAdmin) return;
 
@@ -1129,10 +1136,12 @@ onChange={async (e) => {
 {openFatigue === `${p.id}-sprinter` && (
   <div className="fatigue-popover">
     <img
-    src="/fatigue-rider.png"
-    alt="Træt rytter"
-    className="fatigue-image"
-  />
+  src={getFatigueImage(
+    getFatigueValue(p.id, "sprinter")
+  )}
+  alt="Træt rytter"
+  className="fatigue-image"
+/>
     <label>
       Antal træthedskort
       <input
@@ -1278,11 +1287,13 @@ onChange={async (e) => {
 
 {openFatigue === `${p.id}-rouleur` && (
   <div className="fatigue-popover">
-    <img
-    src="/fatigue-rider.png"
-    alt="Træt rytter"
-    className="fatigue-image"
-  />
+   <img
+  src={getFatigueImage(
+    getFatigueValue(p.id, "rouleur")
+  )}
+  alt="Træt rytter"
+  className="fatigue-image"
+/>
     <label>
       Antal træthedskort
       <input
