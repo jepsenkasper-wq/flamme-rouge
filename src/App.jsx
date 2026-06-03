@@ -114,12 +114,12 @@ const [adminInput, setAdminInput] = useState("");
 const [unlockedGames, setUnlockedGames] = useState({});
 const [lockCodeInput, setLockCodeInput] = useState("");
 const [showDeleteGameConfirm, setShowDeleteGameConfirm] = useState(false);
-const [fatigueCards, setFatigueCards] = useState({});
 const [openFatigue, setOpenFatigue] = useState(null);
 const activeGame = games[currentGame] ?? null;
 const players = activeGame?.players ?? [];
 const stage = activeGame?.stage ?? 1;
 const results = activeGame?.results ?? {};
+const fatigueCards = activeGame?.fatigue_cards ?? {};
 
 const isLocked =
   !!activeGame?.admin_code && activeGame.admin_code.length > 0;
@@ -250,6 +250,7 @@ useEffect(() => {
   players: game.players || [],
   stage: game.stage || 1,
   results: game.results || {},
+  fatigue_cards: game.fatigue_cards || {},
 },
       ])
     );
@@ -535,7 +536,13 @@ async function updateFatigue(playerId, rider, value) {
     },
   };
 
-  setFatigueCards(newFatigueCards);
+  setGames((prev) => ({
+    ...prev,
+    [currentGame]: {
+      ...prev[currentGame],
+      fatigue_cards: newFatigueCards,
+    },
+  }));
 
   await supabase
     .from("games")
@@ -1105,6 +1112,45 @@ onChange={async (e) => {
   <div className="rider-content">
     <h4 className="rider-title sprinter-title">Sprinter</h4>
 
+    <button
+  className="fatigue-toggle"
+  type="button"
+  onClick={() =>
+    setOpenFatigue(
+      openFatigue === `${p.id}-sprinter`
+        ? null
+        : `${p.id}-sprinter`
+    )
+  }
+>
+  Træthedskort
+</button>
+
+{openFatigue === `${p.id}-sprinter` && (
+  <div className="fatigue-popover">
+    <img
+    src="/fatigue-rider.png"
+    alt="Træt rytter"
+    className="fatigue-image"
+  />
+    <label>
+      Antal træthedskort
+      <input
+        disabled={!isAdmin}
+        type="number"
+        min="0"
+        value={getFatigueValue(p.id, "sprinter")}
+        onChange={(e) =>
+          updateFatigue(
+            p.id,
+            "sprinter",
+            Number(e.target.value)
+          )
+        }
+      />
+    </label>
+  </div>
+)}
     <div className="rider-input-grid">
       <div className="stat-field">
   <div className="stat-label">
@@ -1200,45 +1246,7 @@ onChange={async (e) => {
     />
   </div>
 </div>
-<button
-  className="fatigue-toggle"
-  type="button"
-  onClick={() =>
-    setOpenFatigue(
-      openFatigue === `${p.id}-sprinter`
-        ? null
-        : `${p.id}-sprinter`
-    )
-  }
->
-  Træthedskort
-</button>
 
-{openFatigue === `${p.id}-sprinter` && (
-  <div className="fatigue-popover">
-    <img
-    src="/fatigue-rider.png"
-    alt="Træt rytter"
-    className="fatigue-image"
-  />
-    <label>
-      Antal træthedskort
-      <input
-        disabled={!isAdmin}
-        type="number"
-        min="0"
-        value={getFatigueValue(p.id, "sprinter")}
-        onChange={(e) =>
-          updateFatigue(
-            p.id,
-            "sprinter",
-            Number(e.target.value)
-          )
-        }
-      />
-    </label>
-  </div>
-)}
     </div>
   </div>
 </div>
@@ -1251,8 +1259,48 @@ onChange={async (e) => {
 >
   <div className="rider-content">
     <h4 className="rider-title rouleur-title">
-      Rouleur
+      Rouleur 
     </h4>
+    
+    <button
+  className="fatigue-toggle"
+  type="button"
+  onClick={() =>
+    setOpenFatigue(
+      openFatigue === `${p.id}-rouleur`
+        ? null
+        : `${p.id}-rouleur`
+    )
+  }
+>
+  Træthedskort
+</button>
+
+{openFatigue === `${p.id}-rouleur` && (
+  <div className="fatigue-popover">
+    <img
+    src="/fatigue-rider.png"
+    alt="Træt rytter"
+    className="fatigue-image"
+  />
+    <label>
+      Antal træthedskort
+      <input
+        disabled={!isAdmin}
+        type="number"
+        min="0"
+        value={getFatigueValue(p.id, "rouleur")}
+        onChange={(e) =>
+          updateFatigue(
+            p.id,
+            "rouleur",
+            Number(e.target.value)
+          )
+        }
+      />
+    </label>
+  </div>
+)}
 
     <div className="rider-input-grid">
 
@@ -1314,45 +1362,7 @@ onChange={async (e) => {
       />
     </div>
   </div>
-<button
-  className="fatigue-toggle"
-  type="button"
-  onClick={() =>
-    setOpenFatigue(
-      openFatigue === `${p.id}-rouleur`
-        ? null
-        : `${p.id}-rouleur`
-    )
-  }
->
-  Træthedskort
-</button>
 
-{openFatigue === `${p.id}-rouleur` && (
-  <div className="fatigue-popover">
-    <img
-    src="/fatigue-rider.png"
-    alt="Træt rytter"
-    className="fatigue-image"
-  />
-    <label>
-      Antal træthedskort
-      <input
-        disabled={!isAdmin}
-        type="number"
-        min="0"
-        value={getFatigueValue(p.id, "rouleur")}
-        onChange={(e) =>
-          updateFatigue(
-            p.id,
-            "rouleur",
-            Number(e.target.value)
-          )
-        }
-      />
-    </label>
-  </div>
-)}
 </div>
   </div>
 </div>
