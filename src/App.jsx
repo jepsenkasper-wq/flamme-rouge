@@ -431,28 +431,45 @@ function cancelDelete() {
 }
 
 console.log("FIRST PLAYER:", players[0]);
-function updateTieBreak(playerId, rider, direction) {
+
+async function updateTieBreak(playerId, rider, direction) {
   if (!isAdmin) return;
+  if (!currentGame) return;
 
-  setGames((prev) => {
-    const copy = { ...prev };
+  const entry =
+    results?.[stage]?.[playerId]?.[rider];
 
-    const entry =
-      copy[currentGame]
-        ?.results?.[stage]?.[playerId]?.[rider];
+  if (!entry) return;
 
-    if (!entry) return prev;
+  const current = entry.tieBreakOrder ?? 0;
+  const newValue = current + direction;
 
-    const current = entry.tieBreakOrder ?? 0;
-    const newValue = current + direction;
+  const newResults = {
+    ...results,
+    [stage]: {
+      ...results?.[stage],
+      [playerId]: {
+        ...results?.[stage]?.[playerId],
+        [rider]: {
+          ...entry,
+          tieBreakOrder: newValue,
+        },
+      },
+    },
+  };
 
-    copy[currentGame].results[stage][playerId][rider] = {
-      ...entry,
-      tieBreakOrder: newValue,
-    };
+  setGames((prev) => ({
+    ...prev,
+    [currentGame]: {
+      ...prev[currentGame],
+      results: newResults,
+    },
+  }));
 
-    return copy;
-  });
+  await supabase
+    .from("games")
+    .update({ results: newResults })
+    .eq("id", currentGame);
 }
 
 function updateTieBreakOrder(list) {
