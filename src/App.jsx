@@ -470,6 +470,44 @@ async function updateTieBreak(playerId, rider, direction) {
     .from("games")
     .update({ results: newResults })
     .eq("id", currentGame);
+}async function updateTieBreak(playerId, rider, direction) {
+  if (!isAdmin) return;
+  if (!currentGame) return;
+
+  const entry =
+    results?.[stage]?.[playerId]?.[rider];
+
+  if (!entry) return;
+
+  const current = entry.tieBreakOrder ?? 0;
+  const newValue = current + direction;
+
+  const newResults = {
+    ...results,
+    [stage]: {
+      ...results?.[stage],
+      [playerId]: {
+        ...results?.[stage]?.[playerId],
+        [rider]: {
+          ...entry,
+          tieBreakOrder: newValue,
+        },
+      },
+    },
+  };
+
+  setGames((prev) => ({
+    ...prev,
+    [currentGame]: {
+      ...prev[currentGame],
+      results: newResults,
+    },
+  }));
+
+  await supabase
+    .from("games")
+    .update({ results: newResults })  
+    .eq("id", currentGame);
 }
 
 function updateTieBreakOrder(list) {
@@ -581,6 +619,18 @@ async function updateFatigue(playerId, rider, value) {
   function num(e) {
     return Number(e.target.value || 0);
   }
+
+  function getTotalTourPoints(playerId, rider) {
+  let total = 0;
+
+  for (let s = 1; s <= stage; s++) {
+    total += Number(
+      results?.[s]?.[playerId]?.[rider]?.tourPoints || 0
+    );
+  }
+
+  return total;
+}
 
   // =========================
   // ⏱ TIME HELPERS
@@ -1136,6 +1186,14 @@ onChange={async (e) => {
   <div className="rider-content">
     <h4 className="rider-title sprinter-title">Sprinter</h4>
 
+  <div className="rider-meta">
+  <div className="tourpoints-total">
+    <span>Tourpoint i alt:</span>
+    <strong>
+      {getTotalTourPoints(p.id, "sprinter")}
+    </strong>
+  </div>
+
     <button
   className="fatigue-toggle"
   type="button"
@@ -1149,6 +1207,7 @@ onChange={async (e) => {
 >
   Træthedskort
 </button>
+</div>
 
 {openFatigue === `${p.id}-sprinter` && (
   <div className="fatigue-popover">
@@ -1288,6 +1347,14 @@ onChange={async (e) => {
       Rouleur 
     </h4>
     
+     <div className="rider-meta">
+  <div className="tourpoints-total">
+    <span>Tourpoint i alt:</span>
+    <strong>
+      {getTotalTourPoints(p.id, "rouleur")}
+    </strong>
+  </div>
+
     <button
   className="fatigue-toggle"
   type="button"
@@ -1301,6 +1368,7 @@ onChange={async (e) => {
 >
   Træthedskort
 </button>
+</div>
 
 {openFatigue === `${p.id}-rouleur` && (
   <div className="fatigue-popover">

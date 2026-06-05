@@ -348,7 +348,7 @@ input, select {
   text-transform: none;
   letter-spacing: 2px;
   font-size: 32px;
-  margin: 0 0 14px;
+  margin: 0 0 2px;
   line-height: 1;
   text-shadow:
     0 0 8px rgba(251,241,216,0.9),
@@ -437,6 +437,33 @@ input, select {
   min-width: 55px;
   padding: 3px 4px;
   text-align: center;
+}
+
+.rider-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  background: rgba(255, 247, 232, 0.9);
+  padding: 1px 6px;
+  border-radius: 6px;
+
+  margin-bottom: 2px;
+}
+
+.tourpoints-total {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+
+  font-size: 0.5rem;
+  line-height: 1;
+  color: rgba(47, 36, 27, 0.85);
+}
+
+.tourpoints-total strong {
+  font-size: 0.5rem;
+  line-height: 1;
 }
 
 /* =========================
