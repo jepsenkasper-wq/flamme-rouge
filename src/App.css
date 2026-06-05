@@ -1292,17 +1292,6 @@ input, select {
     margin: 6px 0 10px;
   }
 
-  .fatigue-toggle {
-    position: absolute;
-
-    top: 22px;
-    left: 2px;
-
-    right: auto;
-    bottom: auto;
-
-    font-size: 0.75rem;
-  }
 }
 @media (max-width: 768px) {
   .podium-label {
@@ -1393,13 +1382,24 @@ input, select {
 }
 
 @media (max-width: 768px) {
+  .rider-meta {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+
+    margin-top: -4px;
+    margin-bottom: 8px;
+  }
+
   .fatigue-toggle {
     position: static;
-    display: block;
-    margin: -8px auto 8px;
-    font-size: 0.75rem;
-    text-align: center;
-    transform: translateX(80px)
+    transform: none;
+    margin: 0;
+  }
+
+  .tourpoints-total {
+    margin: 0;
   }
 }
 
